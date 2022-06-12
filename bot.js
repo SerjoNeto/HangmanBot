@@ -5,7 +5,8 @@ const { mainCommands } = require('./utils/commands');
 const { 
     addHangmanClient, 
     removeHangmanClient,
-    transferHangmanClient 
+    transferHangmanClient,
+    autoStartHangmanClient,
 } = require('./commands/main-commands');
 const { loadNameIdData } = require('./data/name-functions')
 
@@ -30,7 +31,9 @@ const client = new tmi.client(options);
 client.connect();
 
 client.on('connected', (address, port) => {
-    if (loadNameIdData(client, hangmanChannel)) {
+    const nameList = loadNameIdData(client, hangmanChannel)
+    if (nameList !== null) {
+        autoStartHangmanClient(client, hangmanChannel, nameList);
         client.action(hangmanChannel, `is live! Previously saved data loaded successfully!`);
     } else {
         client.action(hangmanChannel, `is live! Previously saved data failed to load.`);  

@@ -45,10 +45,9 @@ function loadNameIdData(client, channel) {
     try {
     	var userIdJSON = fs.readFileSync(dataPath, 'utf-8');
         nameId = JSON.parse(userIdJSON);
-        return true;
+        return nameId;
     } catch (e) {
-    	console.log(e);
-        return false;
+        return null;
     }
 }
 

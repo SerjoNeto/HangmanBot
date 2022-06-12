@@ -14,15 +14,6 @@ const { createNewHangmanClient } = require('./new-hangman-client');
 // List of live clients. Key = id, Value = client.
 const liveHangmanClients = {};
 
-// Automatically starts Hangman games for nameId
-// const autoStartHangmanClients = ({ client, channel, nameId }) => {
-// 	console.log("IN AUTO");
-// 	for (const [id, name] of Object.entries(nameId)) {
-// 		const props = {client, channel, name, id};
-//     	() => addHangmanClient(props);
-// 	}
-// };
-
 // Adds a Hangman Game to channel [name]. 
 const addHangmanClient = ({ client, channel, name, id }) => {
 	// TODO: Spam checker. Two minute cooldown between each add.
@@ -60,8 +51,8 @@ const transferHangmanClient = ({ client, channel, name, id }) => {
 		// Can transfer account to new username, so do it.
 		const transferClient = liveHangmanClients[id];
 		const oldId = getName(id);
-		transferClient.part(oldId);
 		transferClient.join(name);
+		transferClient.part(oldId);
 		transferName(id, name);
 		client.say(channel, `@${name}, your Hangman Bot has been successfully transferred!`)
 	} else {
@@ -71,8 +62,18 @@ const transferHangmanClient = ({ client, channel, name, id }) => {
 	}
 };
 
+// Automatically starts Hangman games for nameId
+function autoStartHangmanClient( client, channel, nameId ) {
+	for (const [id, name] of Object.entries(nameId)) {
+		const hangmanClient = createNewHangmanClient(name);
+		liveHangmanClients[id] = hangmanClient;
+	}
+};
+
+
 module.exports = {
 	addHangmanClient,
 	removeHangmanClient,
-	transferHangmanClient
+	transferHangmanClient,
+	autoStartHangmanClient
 };
