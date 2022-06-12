@@ -19,7 +19,7 @@ const addHangmanClient = ({ client, channel, name, id }) => {
 	// TODO: Spam checker. Two minute cooldown between each add.
 
 	// Check if user already exists.
-	if (hasId(id)) {
+	if (id in liveHangmanClients) {
 		client.say(channel, `@${name}, you have already been added!`);
 		return;
 	}

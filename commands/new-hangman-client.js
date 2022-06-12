@@ -1,5 +1,6 @@
 const tmi = require('tmi.js');
 const { hangmanBotOAuth } = require('../private/password');
+const { getRandomWord } = require('../data/dictionary')
 
 /**
   * Creates a new Hangman client to play Hangman on.
@@ -35,6 +36,11 @@ function createNewHangmanClient(name) {
 
 		if(message.toLowerCase() === '!hello') {
 		   newHangmanClient.say(channel, `@${user.username}, heya!`);
+		}
+
+		if(message.toLowerCase() === '!word') {
+			const word = getRandomWord();
+		    newHangmanClient.say(channel, `@${user.username}, ${word}!`);
 		}
 	});
 	return newHangmanClient;

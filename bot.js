@@ -8,7 +8,8 @@ const {
     transferHangmanClient,
     autoStartHangmanClient,
 } = require('./commands/main-commands');
-const { loadNameIdData } = require('./data/name-functions')
+const { loadNameIdData } = require('./data/name-functions');
+const { loadDictionary } = require('./data/dictionary');
 
 const nameDataLocation = './data/name-data.json';
 const hangmanChannel = 'PlayHangmanBot';
@@ -31,6 +32,7 @@ const client = new tmi.client(options);
 client.connect();
 
 client.on('connected', (address, port) => {
+    loadDictionary();
     const nameList = loadNameIdData(client, hangmanChannel)
     if (nameList !== null) {
         autoStartHangmanClient(client, hangmanChannel, nameList);
