@@ -1,4 +1,6 @@
-const { getRandomWord} = require('../data/dictionary');
+const { getRandomWord } = require('../data/dictionary');
+const { hangmanCommands } = require('../utils/commands');
+const { compareLists } = require('../utils/lists');
 // HANGMAN VARIABLES
 
 /* String list of users who are on cooldown on guessing letters. */
@@ -21,7 +23,6 @@ const guessed = [];
 let word = [];
 /* Current progress of Hangman word guess. In char array for faster complexity. */
 let progress = [];
-
 
 /*
  * Command: !start
@@ -46,7 +47,7 @@ const hangmanStart = ({ channel, client, user }) => {
 
             // Picks a new word.
             const selectedWord = getRandomWord();
-            word = Array.from(selectedWord);
+            word = Array.from(selectedWord.toUpperCase());
             progress = Array(selectedWord.length).fill('-');
 
             console.log(`${word.join('')}`);
@@ -68,7 +69,78 @@ const hangmanEnd = ({ channel, client, user }) => {
     }
 };
 
+/** Checks if a message is !guess and has a guess. */
+const isGuess = message => (message.startsWith(hangmanCommands.GUESS) && message.split(" ")[0] === hangmanCommands.GUESS);
+
+/**
+ * Command: !guess
+ * Permissions: Everybody.
+ * Guesses a letter or a word for a game.
+ */
+//TODO: make guesses alphabet only.
+const hangmanGuess = ({ channel, client, user, message }) => {
+    let guessMessage = message.split(" ");
+
+    if (!started) {
+        // Game not started.
+        client.say(channel, `@${user["display-name"]} There is no Hangman game in progress.`);
+    } else if (guessMessage.length !== 2 || (guessMessage[1].length !== 1 && guessMessage[1].length !== word.length)) {
+        // Invalid guess.
+        client.say(channel, `@${user["display-name"]} Invalid "!guess <letter/word>".`);
+    } else if (guessed.includes(guessMessage[1].toUpperCase())) {
+        // Already guessed.
+        client.say(channel, `@${user["display-name"]} "${guessMessage[1].toUpperCase()}" has been guessed. Guessed: ${guessed.join(', ')}.`);
+    } else if (guessMessage[1].length === 1){
+        // Letter
+
+        // Add letter to list of guesses
+        const charGuess = guessMessage[1].toUpperCase();
+        guessed.push(charGuess);
+        guessed.sort();
+
+        // Check if the letter was a correct guess.
+        let times = 0;
+        for (let i = 0; i < word.length; i++) {
+            if(word[i] === charGuess) {
+                progress[i] = charGuess;
+                times++;
+            }
+        }
+
+        if(times > 0) {
+            // Correct guess.
+            if(compareLists(word, progress)) {
+                // Winner, so upload stats and announce win.
+                started = false;
+                client.say(channel, `@${user["display-name"]} You win! Word is "${word.join('')}".`);
+            } else {
+                //Correct, but more letters to be guessed.
+                client.say(channel, `@${user["display-name"]} ${times} "${charGuess}". Lives: ${lives}. Guessed: ${guessed.join(', ')}. Progress: ${progress.join('')}.`);
+            }
+
+        } else {
+            // Incorrect guess.
+            lives--;
+            if(lives === 0){
+                // Game over
+                started = false;
+                client.say(channel, `@${user["display-name"]} GAME OVER. No "${charGuess}". Guessed: ${guessed.join(', ')}. Final progress: ${progress.join('')}. Actual Word: "${word.join('')}".`);
+            } else {
+                // Incorrect, but there are still lives remaining.
+                client.say(channel, `@${user["display-name"]} No "${charGuess}". Lives: ${lives}. Guessed: ${guessed.join(', ')}. Progress: ${progress.join('')}.`);
+            }
+        }
+    } else if (guessMessage[1].length === word.length) {
+        // Word guess
+        client.say(channel, `Letter : ${guessMessage[1]} ${guessed.join(', ')}.`);
+    } else {
+        // Should never be here, so error message.
+    }
+};
+
 module.exports = {
+    isGuess,
 	hangmanStart,
-	hangmanEnd
+	hangmanEnd,
+    hangmanGuess
 };

@@ -1,8 +1,7 @@
 const tmi = require('tmi.js');
 const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands } = require('../utils/commands');
-const { getRandomWord } = require('../data/dictionary');
-const { hangmanStart, hangmanEnd } = require('./hangman-commands')
+const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-commands')
 
 /**
   * Creates a new Hangman client to play Hangman on.
@@ -37,25 +36,29 @@ function createNewHangmanClient(name) {
 		if(self || !message.startsWith("!")) return;
 
 		const client = newHangmanClient;
-    const props = { channel, client, user };
+		const props = { channel, client, user };
 
-    /* Dictionary list of explicit commands */
-    const chatCommands = {
-        [hangmanCommands.START]: () => hangmanStart(props),
-        [hangmanCommands.END]: () => hangmanEnd(props),
-    }
+		/* Dictionary list of explicit commands */
+		const chatCommands = {
+			[hangmanCommands.START]: () => hangmanStart(props),
+			[hangmanCommands.END]: () => hangmanEnd(props),
+			[hangmanCommands.GUESS]: () => hangmanGuess({ ...props, message }),
+		}
 
-    let command;
-    switch(true){
-        default:
-            command = message;
-            break;
-    }
+		let command;
+		switch(true){
+			case (isGuess(message)):
+				command = '!guess';
+				break;
+			default:
+				command = message;
+				break;
+		}
 
-    /* Node versions < v14 do not support optional chaining (null safe operator) */
-    if(chatCommands[command]) {
-        chatCommands[command]();
-    }
+		/* Node versions < v14 do not support optional chaining (null safe operator) */
+		if(chatCommands[command]) {
+			chatCommands[command]();
+		}
 	});
 
 	return newHangmanClient;
