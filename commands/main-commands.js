@@ -1,5 +1,5 @@
 const { mainCommands } = require('../utils/commands');
-const { hasId, getName, addName, deleteName, transferName } = require('../data/name-functions');
+const { hasId, getName, addName, deleteName, transferName } = require('../data/model/name-functions');
 const { createNewHangmanClient } = require('./new-hangman-client');
 
 /**

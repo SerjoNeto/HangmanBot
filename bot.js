@@ -8,10 +8,9 @@ const {
     transferHangmanClient,
     autoStartHangmanClient,
 } = require('./commands/main-commands');
-const { loadNameIdData } = require('./data/name-functions');
-const { loadDictionary } = require('./data/dictionary');
+const { loadNameIdData } = require('./data/model/name-functions');
+const { loadDictionary } = require('./data/model/dictionary');
 
-const nameDataLocation = './data/name-data.json';
 const hangmanChannel = 'PlayHangmanBot';
 const options = {
     options: {

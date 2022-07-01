@@ -1,4 +1,4 @@
-const { getRandomWord } = require('../data/dictionary');
+const { getRandomWord } = require('../data/model/dictionary');
 const { hangmanCommands } = require('../utils/commands');
 const { compareLists } = require('../utils/lists');
 // HANGMAN VARIABLES
@@ -30,32 +30,28 @@ let progress = [];
  * Manually starts a new Hangman game for chat to play.
  */
 const hangmanStart = ({ channel, client, user }) => {
-    //if(isBroadcasterOrMod(user)){
-        if(started){
-            // If a Hangman game is in progress, nothing happens.
-            client.say(channel, `A Hangman game is in progress!`);
-        } else {
-            // Resets all previous scores and data.
-            for(const key in letterCooldown) {
-                delete letterCooldown[key];
-            }
-            for(const key in wordCooldown) {
-                delete wordCooldown[key];
-            }
-            lives = 6;
-            guessed.length = 0;
-
-            // Picks a new word.
-            const selectedWord = getRandomWord();
-            console.log(`Word selected: ${selectedWord}`);
-            word = Array.from(selectedWord.toUpperCase());
-            progress = Array(selectedWord.length).fill('-');
-
-            console.log(`${word.join('')}`);
-            client.say(channel, `A Hangman game has started! Use "!guess <letter or word here>" to play. Progress: ${progress.join('')}.`);
-            started = true;
+    if(!started){
+        // Resets all previous scores and data.
+        for(const key in letterCooldown) {
+            delete letterCooldown[key];
         }
-    //}
+        for(const key in wordCooldown) {
+            delete wordCooldown[key];
+        }
+        lives = 6;
+        guessed.length = 0;
+
+        // Picks a new word.
+        const selectedWord = getRandomWord();
+        console.log(`Word selected: ${selectedWord}`);
+        word = Array.from(selectedWord.toUpperCase());
+        progress = Array(selectedWord.length).fill('-');
+
+        console.log(`${word.join('')}`);
+        client.say(channel, `A Hangman game has started! Use "!guess <letter or word here>" to play. Progress: ${progress.join('')}.`);
+        started = true;
+    }
+
 };
 
 /*
@@ -80,17 +76,15 @@ const isGuess = message => (message.startsWith(hangmanCommands.GUESS) && message
  */
 //TODO: make guesses alphabet only.
 const hangmanGuess = ({ channel, client, user, message }) => {
-    let guessMessage = message.split(" ");
+    if (!started) return;
 
-    if (!started) {
-        // Game not started.
-        client.say(channel, `@${user["display-name"]} There is no Hangman game in progress.`);
-    } else if (guessMessage.length !== 2 || (guessMessage[1].length !== 1 && guessMessage[1].length !== word.length)) {
+    let guessMessage = message.split(" ");
+    if ((guessMessage.length !== 2 || (guessMessage[1].length !== 1 && guessMessage[1].length !== word.length)) || !(/^[a-zA-Z]+$/.test(guessMessage[1]))) {
         // Invalid guess.
         client.say(channel, `@${user["display-name"]} Invalid "!guess <letter/word>".`);
     } else if (guessed.includes(guessMessage[1].toUpperCase())) {
         // Already guessed.
-        client.say(channel, `@${user["display-name"]} "${guessMessage[1].toUpperCase()}" has been guessed. Guessed: ${guessed.join(', ')}.`);
+        client.say(channel, `@${user["display-name"]} "${guessMessage[1].toUpperCase()}" has been guessed. Lives: ${lives}. Guessed: ${guessed.join(', ')}. Progress: ${progress.join('')}.`);
     } else if (guessMessage[1].length === 1){
         // Letter
 

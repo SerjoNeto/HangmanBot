@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 let dictionary = [];
-const dictionaryLocation = "./data/dict.txt";
+const dictionaryLocation = "./data/real-dict.txt";
 
 function loadDictionary() {
 	try {
