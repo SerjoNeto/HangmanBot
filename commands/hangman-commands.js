@@ -47,6 +47,7 @@ const hangmanStart = ({ channel, client, user }) => {
 
             // Picks a new word.
             const selectedWord = getRandomWord();
+            console.log(`Word selected: ${selectedWord}`);
             word = Array.from(selectedWord.toUpperCase());
             progress = Array(selectedWord.length).fill('-');
 
@@ -132,9 +133,27 @@ const hangmanGuess = ({ channel, client, user, message }) => {
         }
     } else if (guessMessage[1].length === word.length) {
         // Word guess
-        client.say(channel, `Letter : ${guessMessage[1]} ${guessed.join(', ')}.`);
+        const wordGuess = guessMessage[1].toUpperCase();
+        guessed.push(wordGuess);
+        guessed.sort();
+
+        if(wordGuess === word.join('')) {
+            started = false;
+            client.say(channel, `@${user["display-name"]} You win! Word is "${word.join('')}".`);
+        } else {
+            lives--;
+            if(lives === 0){
+                // Game over
+                started = false;
+                client.say(channel, `@${user["display-name"]} GAME OVER. The word is not "${wordGuess}". Guessed: ${guessed.join(', ')}. Final progress: ${progress.join('')}. Actual Word: "${word.join('')}".`);
+            } else {
+                // Incorrect, but there are still lives remaining.
+                client.say(channel, `@${user["display-name"]} The word is not "${wordGuess}". Lives: ${lives}. Guessed: ${guessed.join(', ')}. Progress: ${progress.join('')}.`);
+            }
+        }
     } else {
         // Should never be here, so error message.
+        client.say(channel, `@${user["display-name"]} Invalid "!guess <letter/word>".`);
     }
 };
 
