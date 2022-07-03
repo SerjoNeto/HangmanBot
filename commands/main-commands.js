@@ -25,7 +25,7 @@ const addHangmanClient = ({ client, channel, name, id }) => {
 	}
 	// Add user, create new tmi.js client, and add to list of live clients.
 	addName(id, name);
-	const hangmanClient = createNewHangmanClient(name);
+	const hangmanClient = createNewHangmanClient(id, name);
 	liveHangmanClients[id] = hangmanClient;
 	client.say(channel, `Congrats @${name}, the Hangman Bot has been successfully added to your channel!`);
 };
@@ -65,7 +65,7 @@ const transferHangmanClient = ({ client, channel, name, id }) => {
 // Automatically starts Hangman games for nameId
 function autoStartHangmanClient( client, channel, nameId ) {
 	for (const [id, name] of Object.entries(nameId)) {
-		const hangmanClient = createNewHangmanClient(name);
+		const hangmanClient = createNewHangmanClient(id, name);
 		liveHangmanClients[id] = hangmanClient;
 	}
 };

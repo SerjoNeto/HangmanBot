@@ -1,6 +1,7 @@
 const { getRandomWord } = require('../data/model/dictionary');
 const { hangmanCommands } = require('../utils/commands');
 const { compareLists } = require('../utils/lists');
+const { isAdmin } = require('../utils/users');
 // HANGMAN VARIABLES
 
 /* String list of users who are on cooldown on guessing letters. */
@@ -30,7 +31,7 @@ let progress = [];
  * Manually starts a new Hangman game for chat to play.
  */
 const hangmanStart = ({ channel, client, user }) => {
-    if(!started){
+    if(!started && isAdmin(user)){
         // Resets all previous scores and data.
         for(const key in letterCooldown) {
             delete letterCooldown[key];
@@ -60,7 +61,7 @@ const hangmanStart = ({ channel, client, user }) => {
  * Manually ends a game.
  */
 const hangmanEnd = ({ channel, client, user }) => {
-    if(started){
+    if(started && isAdmin(user)){
         started = false;
         client.say(channel, `The Hangman game has ended.`);
     }

@@ -1,4 +1,5 @@
 const tmi = require('tmi.js');
+const { loadSettings } = require('../data/model/settings');
 const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands } = require('../utils/commands');
 const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-commands')
@@ -7,7 +8,9 @@ const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-c
   * Creates a new Hangman client to play Hangman on.
   * @param name Twitch channel name
   */
-function createNewHangmanClient(name) {
+function createNewHangmanClient(id, name) {
+	loadSettings(id);
+
 	const hangmanOptions = {
 	    options: {
 	        debug: true,
