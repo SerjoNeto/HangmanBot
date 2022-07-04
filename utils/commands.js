@@ -10,3 +10,10 @@ exports.hangmanCommands = {
 	END: '!end',
 	GUESS: '!guess'
 }
+
+exports.settingCommands = {
+	LETTERCOOLDOWN: `!letter`,
+	WORDCOOLDOWN: `!word`,
+	SUBONLY: `!sub-only`,
+	AUTO: `!auto`
+}

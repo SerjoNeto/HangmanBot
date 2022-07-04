@@ -1,5 +1,6 @@
 const tmi = require('tmi.js');
-const { loadSettings } = require('../data/model/settings');
+const fs = require('fs');
+const { ChannelSettings } = require('../data/model/settings');
 const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands } = require('../utils/commands');
 const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-commands')
@@ -9,7 +10,15 @@ const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-c
   * @param name Twitch channel name
   */
 function createNewHangmanClient(id, name) {
-	loadSettings(id);
+	// Create folder in logs
+	const dir = `./logs/${id}`
+	if(!fs.existsSync(dir)) {
+		fs.mkdirSync(dir);
+	}
+
+	// Make a settings class to keep track of channel settings
+	const channelSettings = new ChannelSettings();
+	channelSettings.loadSettings(id);
 
 	const hangmanOptions = {
 	    options: {
