@@ -2,8 +2,10 @@ const tmi = require('tmi.js');
 const fs = require('fs');
 const { ChannelSettings } = require('../data/model/settings');
 const { hangmanBotOAuth } = require('../private/password');
-const { hangmanCommands } = require('../utils/commands');
-const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-commands')
+const { hangmanCommands, settingCommands } = require('../utils/commands');
+const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-commands');
+const { isAdmin } = require('../utils/users');
+const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown } = require('./setting-commands');
 
 /**
   * Creates a new Hangman client to play Hangman on.
@@ -48,13 +50,38 @@ function createNewHangmanClient(id, name) {
 		if(self || !message.startsWith("!")) return;
 
 		const client = newHangmanClient;
-		const props = { channel, client, user };
 
-		/* Dictionary list of explicit commands */
+		// Admin commands only. Mostly just settings.
+		if (isAdmin(user)) {
+			const adminProps = { channel, client, user, id, channelSettings }
+			const adminCommands = {
+				[settingCommands.LETTERCOOLDOWN]: () => settingLetterCooldown({ ...adminProps, message }),
+				[settingCommands.WORDCOOLDOWN]: () => settingWordCooldown({...adminProps, message})
+			}
+
+			let settingCommand;
+			switch(true){
+				case (isLetterCooldown(message)):
+					settingCommand = '!letter';
+					break;
+				case (isWordCooldown(message)):
+					settingCommand = `!word`
+					break;
+				default:
+					settingCommand = message;
+					break;
+			}
+			if(adminCommands[settingCommand]) {
+				adminCommands[settingCommand]();
+			}
+		}
+
+		// Commands for everybody
+		const hangmanProps = { channel, client, user };
 		const chatCommands = {
-			[hangmanCommands.START]: () => hangmanStart(props),
-			[hangmanCommands.END]: () => hangmanEnd(props),
-			[hangmanCommands.GUESS]: () => hangmanGuess({ ...props, message }),
+			[hangmanCommands.START]: () => hangmanStart(hangmanProps),
+			[hangmanCommands.END]: () => hangmanEnd(hangmanProps),
+			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, message }),
 		}
 
 		let command;
@@ -66,8 +93,6 @@ function createNewHangmanClient(id, name) {
 				command = message;
 				break;
 		}
-
-		/* Node versions < v14 do not support optional chaining (null safe operator) */
 		if(chatCommands[command]) {
 			chatCommands[command]();
 		}

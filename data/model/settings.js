@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { isInt } = require('../../utils/parameter');
 
 /**
  * Class created for every Hangman channel for settings that can be set.
@@ -74,7 +73,7 @@ class ChannelSettings {
      */
     saveSettings(id) {
         const file = `./logs/${id}/settings.json`
-        fs.writeFile(file, JSON.stringify(settings, null, 4), (err) => {});
+        fs.writeFile(file, JSON.stringify(this.getSettingJSON(), null, 4), (err) => {});
     }
     
     /**
@@ -91,7 +90,7 @@ class ChannelSettings {
      * @returns If new letter cooldown was successfully set
      */
     setLetterCooldown(second, id) {
-        if (isInt(second) && (second < 0 || second > 999)) {
+        if (second < 0 || second > 999) {
             return false;
         } else {
             this.letterCooldown = second;
@@ -114,7 +113,7 @@ class ChannelSettings {
      * @returns If new word cooldown was successfully set
      */
     setWordCooldown(second, id) {
-        if (isInt(second) && (second < 0 || second > 999)) {
+        if (second < 0 || second > 999) {
             return false;
         } else {
             this.wordCooldown = second;
