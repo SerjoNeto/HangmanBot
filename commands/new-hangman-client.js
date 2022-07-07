@@ -5,7 +5,7 @@ const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
 const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-commands');
 const { isAdmin } = require('../utils/users');
-const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown } = require('./setting-commands');
+const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, settingAuto, showSettings } = require('./setting-commands');
 
 /**
   * Creates a new Hangman client to play Hangman on.
@@ -56,7 +56,10 @@ function createNewHangmanClient(id, name) {
 			const adminProps = { channel, client, user, id, channelSettings }
 			const adminCommands = {
 				[settingCommands.LETTERCOOLDOWN]: () => settingLetterCooldown({ ...adminProps, message }),
-				[settingCommands.WORDCOOLDOWN]: () => settingWordCooldown({...adminProps, message})
+				[settingCommands.WORDCOOLDOWN]: () => settingWordCooldown({...adminProps, message }),
+				[settingCommands.SUBONLY]: () => settingSubOnly({ ...adminProps, message }),
+				[settingCommands.AUTO]: () => settingAuto({ ...adminProps, message }),
+				[settingCommands.SETTINGS]: () => showSettings({ ...adminProps })
 			}
 
 			let settingCommand;
@@ -66,6 +69,12 @@ function createNewHangmanClient(id, name) {
 					break;
 				case (isWordCooldown(message)):
 					settingCommand = `!word`
+					break;
+				case (isSubOnly(message)):
+					settingCommand = `!subonly`
+					break;
+				case (isAuto(message)):
+					settingCommand = `!auto`
 					break;
 				default:
 					settingCommand = message;

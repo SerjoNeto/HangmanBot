@@ -14,6 +14,7 @@ exports.hangmanCommands = {
 exports.settingCommands = {
 	LETTERCOOLDOWN: `!letter`,
 	WORDCOOLDOWN: `!word`,
-	SUBONLY: `!sub-only`,
-	AUTO: `!auto`
+	SUBONLY: `!subonly`,
+	AUTO: `!auto`,
+	SETTINGS: `!settings`
 }

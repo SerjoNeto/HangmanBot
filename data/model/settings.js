@@ -84,13 +84,13 @@ class ChannelSettings {
     }
 
     /**
-     * Sets a new letter cooldown. Only allowed betwee 0-999 seconds.
+     * Sets a new letter cooldown. Only allowed betwee 0-3600 seconds.
      * @param {int} second Time in seconds of new letter cooldown
      * @param {int} id ID of the Twitch channel.
      * @returns If new letter cooldown was successfully set
      */
     setLetterCooldown(second, id) {
-        if (second < 0 || second > 999) {
+        if (second < 0 || second > 3600) {
             return false;
         } else {
             this.letterCooldown = second;
@@ -107,13 +107,13 @@ class ChannelSettings {
     }
 
     /**
-     * Sets a new word cooldown. Only allowed betwee 0-999 seconds.
+     * Sets a new word cooldown. Only allowed betwee 0-3600 seconds.
      * @param {int} second Time in seconds of new word cooldown
      * @param {int} id ID of the Twitch channel.
      * @returns If new word cooldown was successfully set
      */
     setWordCooldown(second, id) {
-        if (second < 0 || second > 999) {
+        if (second < 0 || second > 3600) {
             return false;
         } else {
             this.wordCooldown = second;
@@ -146,35 +146,11 @@ class ChannelSettings {
         }
     }
 
-        /**
-     * Returns current subOnly state.
-     * @returns IF Hangman is for subscribers only
-     */
-    getSubOnly() {
-        return this.subOnly;
-    }
-
-    /**
-     * Sets whether only subscribers can play Hangman.
-     * @param {boolean} state New state to set for subOnly
-     * @param {int} id ID for the current Hangman player.
-     * @returns True if new sub only state is set, false if the same.
-     */
-    setSubOnly(state, id) {
-        if (this.subOnly === state) {
-            return false;
-        } else {
-            this.subOnly = state;
-            this.saveSettings(id);
-            return true;
-        }
-    }
-
     /**
      * Returns current auto play Hangman state.
      * @returns If a game starts immediately after one has ended.
      */
-    getSubOnly() {
+    getAuto() {
         return this.autoPlay;
     }
 
@@ -184,7 +160,7 @@ class ChannelSettings {
      * @param {int} id ID for the current Hangman player.
      * @returns True if new sub only state is set, false if the same.
      */
-    setSubOnly(state, id) {
+    setAuto(state, id) {
         if (this.autoPlay === state) {
             return false;
         } else {
@@ -199,7 +175,9 @@ class ChannelSettings {
      * @returns String for what the current settings are. 
      */
     printSettings() {
-        return `Letter Guess Cooldown: ${this.letterCooldown}. Word Guess Cooldown: ${this.wordCooldown}. Sub Only: ${this.subOnly}. Auto Start:${this.autoPlay}.`;
+        const subOnlyState = this.wordCooldown ? "ON" : "OFF";
+        const autoPlayState = this.autoPlay ? "ON" : "OFF"
+        return `Letter Guess Cooldown: ${this.letterCooldown} SECOND(S). Word Guess Cooldown: ${this.wordCooldown} SECOND(S). Sub Only: ${subOnlyState}. Auto Start: ${autoPlayState}.`;
     }
 }
 
