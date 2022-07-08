@@ -22,6 +22,7 @@ function createNewHangmanClient(id, name) {
 	const channelSettings = new ChannelSettings();
 	channelSettings.loadSettings(id);
 
+	// Create the Twitch Bot client.
 	const hangmanOptions = {
 	    options: {
 	        debug: true,
@@ -90,7 +91,7 @@ function createNewHangmanClient(id, name) {
 		const chatCommands = {
 			[hangmanCommands.START]: () => hangmanStart(hangmanProps),
 			[hangmanCommands.END]: () => hangmanEnd(hangmanProps),
-			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, message }),
+			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelSettings, message }),
 		}
 
 		let command;

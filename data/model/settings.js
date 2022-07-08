@@ -13,8 +13,8 @@ class ChannelSettings {
      * @param {boolean} autoPlay Automatically start another Hangman game when one ends.
      */
     constructor(
-        letterCooldown = 30,
-        wordCooldown = 90,
+        letterCooldown = 0,
+        wordCooldown = 0,
         subOnly = false,
         autoPlay = false
     ) {
@@ -175,7 +175,7 @@ class ChannelSettings {
      * @returns String for what the current settings are. 
      */
     printSettings() {
-        const subOnlyState = this.wordCooldown ? "ON" : "OFF";
+        const subOnlyState = this.subOnly ? "ON" : "OFF";
         const autoPlayState = this.autoPlay ? "ON" : "OFF"
         return `Letter Guess Cooldown: ${this.letterCooldown} SECOND(S). Word Guess Cooldown: ${this.wordCooldown} SECOND(S). Sub Only: ${subOnlyState}. Auto Start: ${autoPlayState}.`;
     }

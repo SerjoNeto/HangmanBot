@@ -1,4 +1,12 @@
 const { settingCommands } = require("../utils/commands");
+const { isHangmanStarted } = require("./hangman-commands");
+
+function canChangeSettings(client, channel, user) {
+    if(isHangmanStarted()) {
+        client.say(channel, `@${user["display-name"]} This setting cannot be changed during a Hangman game!`);
+        return true;
+    }
+}
 
 /** Check if a message is to change the letter cooldown */
 const isLetterCooldown = message => (message.startsWith(settingCommands.LETTERCOOLDOWN) && message.split(" ")[0] === settingCommands.LETTERCOOLDOWN);
@@ -12,6 +20,7 @@ const settingLetterCooldown = ({ channel, client, user, id, channelSettings, mes
     if (message === settingCommands.LETTERCOOLDOWN) {
         client.say(channel, `@${user["display-name"]} The current letter cooldown guess is ${channelSettings.getLetterCooldown()} seconds. Use "!letter <number between 0-3600>" to change the letter cooldown seconds!`);
     } else if (splitMessage.length === 2) {
+        if(canChangeSettings(client, channel, user)) return;
         const second = parseInt(splitMessage[1]);
         if (!isNaN(second) && channelSettings.setLetterCooldown(second, id)) {
             client.say(channel, `@${user["display-name"]} The new letter cooldown guess is now ${channelSettings.getLetterCooldown()} seconds.`);
@@ -31,6 +40,7 @@ const settingWordCooldown = ({ channel, client, user, id, channelSettings, messa
     if (message === settingCommands.WORDCOOLDOWN) {
         client.say(channel, `@${user["display-name"]} The current letter cooldown guess is ${channelSettings.getWordCooldown()} seconds. Use "!word <number between 0-3600>" to change the word cooldown seconds!`);
     } else if (splitMessage.length === 2) {
+        if(canChangeSettings(client, channel, user)) return;
         const second = parseInt(splitMessage[1]);
         if (!isNaN(second) && channelSettings.setWordCooldown(second, id)) {
             client.say(channel, `@${user["display-name"]} The new letter cooldown guess is now ${channelSettings.getWordCooldown()} seconds.`);

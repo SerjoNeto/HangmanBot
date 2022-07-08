@@ -12,6 +12,6 @@ exports.isAdmin = (user) => {
  * @param {Object} user Object with parameters about the user
  * @returns {Boolean} True if sub, false if not.
  */
-exports.isSubOrAdmin = (user) => {
+exports.isSub = (user) => {
     return user.badges && ('subscriber' in user.badges|| 'founder' in user.badges);
 };
