@@ -1,5 +1,6 @@
 const tmi = require('tmi.js');
 const fs = require('fs');
+const log4js = require('log4js');
 const { ChannelSettings } = require('../data/model/settings');
 const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
@@ -12,6 +13,17 @@ const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCool
   * @param name Twitch channel name
   */
 function createNewHangmanClient(id, name) {
+	// Create logs.
+	log4js.configure({
+		appenders: { 
+			everything: { type: "dateFile", filename: `./logs/${id}/hangman-log.log` } 
+		},
+		categories: { 
+			default: { appenders: ["everything"], level: "debug" } 
+		}
+	});
+	var logger = log4js.getLogger(`${name}`);
+
 	// Create folder in logs
 	const dir = `./logs/${id}`
 	if(!fs.existsSync(dir)) {
@@ -47,8 +59,10 @@ function createNewHangmanClient(id, name) {
 
 	// Listener for Hangman messages. 
 	newHangmanClient.on('message', (channel, user, message, self) => {
-		// Ignore self messages and non-commands.
-		if(self || !message.startsWith("!")) return;
+		// Ignore self messages and non-commands while logging self messages.
+		if(!self && !message.startsWith("!")) return;
+		logger.debug(`${user["display-name"]}: ${message}`);
+		if(self) return;
 
 		const client = newHangmanClient;
 
