@@ -139,10 +139,11 @@ class ChannelScores {
      * @returns List in order of [wins, place]
      */
     getWinsAndPlaceById(userID) {
+        (this.#scoreboard).sort((a, b) => b.wins - a.wins);
         const filteredList = (this.#scoreboard).filter(e => e.id === userID);
         if (filteredList.length > 0) {
             const userWins = (filteredList[0]).wins;
-            const place = (this.#scoreboard).map(e => e.id).indexOf(userID);
+            const place = (this.#scoreboard).findIndex(e => e.wins === userWins);
             return [userWins, place + 1];
         } else {
             return [0, -1];
@@ -154,6 +155,7 @@ class ChannelScores {
      * @returns String of top 10 Hangman winners
      */
     getTopTen() {
+        (this.#scoreboard).sort((a, b) => b.wins - a.wins);
         const shortList = (this.#scoreboard).slice(0, 10).map(e => `${e.user}: ${e.wins} wins`);
         return shortList.join(", ");
     }

@@ -160,8 +160,9 @@ const hangmanGuess = ({ channel, client, user, channelSettings, channelScores, m
             // Correct guess.
             if(compareLists(word, progress)) {
                 // Winner, so upload stats and announce win.
-                client.say(channel, `@${user["display-name"]} You win! Word is "${word.join('')}".`);
                 updateScore(channelScores, true, user["display-name"], user["user-id"]);
+                const [win, place] = channelScores.getWinsAndPlaceById(userId);
+                client.say(channel, `@${user["display-name"]} You win! Word is "${word.join('')}". You are now in ${ordinalSuffix(place)} place with ${win} wins!`);
                 autoStartHangman(channel, client, channelSettings);
             } else {
                 //Correct, but more letters to be guessed.
@@ -173,8 +174,8 @@ const hangmanGuess = ({ channel, client, user, channelSettings, channelScores, m
             lives--;
             if(lives === 0){
                 // Game over
-                client.say(channel, `@${user["display-name"]} GAME OVER. No "${charGuess}". Guessed: ${guessed.join(', ')}. Final progress: ${progress.join('')}. Actual Word: "${word.join('')}".`);
                 updateScore(channelScores, false, user["display-name"], user["user-id"]);
+                client.say(channel, `@${user["display-name"]} GAME OVER. No "${charGuess}". Guessed: ${guessed.join(', ')}. Final progress: ${progress.join('')}. Actual Word: "${word.join('')}".`);
                 autoStartHangman(channel, client, channelSettings);
             } else {
                 // Incorrect, but there are still lives remaining.
@@ -197,15 +198,16 @@ const hangmanGuess = ({ channel, client, user, channelSettings, channelScores, m
         guessed.sort();
 
         if(wordGuess === word.join('')) {
-            client.say(channel, `@${user["display-name"]} You win! Word is "${word.join('')}".`);
             updateScore(channelScores, true, user["display-name"], user["user-id"]);
+            const [win, place] = channelScores.getWinsAndPlaceById(userId);
+            client.say(channel, `@${user["display-name"]} You win! Word is "${word.join('')}". You are now in ${ordinalSuffix(place)} place with ${win} wins!`);
             autoStartHangman(channel, client, channelSettings);
         } else {
             lives--;
             if(lives === 0){
                 // Game over
-                client.say(channel, `@${user["display-name"]} GAME OVER. The word is not "${wordGuess}". Guessed: ${guessed.join(', ')}. Final progress: ${progress.join('')}. Actual Word: "${word.join('')}".`);
                 updateScore(channelScores, false, user["display-name"], user["user-id"]);
+                client.say(channel, `@${user["display-name"]} GAME OVER. The word is not "${wordGuess}". Guessed: ${guessed.join(', ')}. Final progress: ${progress.join('')}. Actual Word: "${word.join('')}".`);
                 autoStartHangman(channel, client, channelSettings);
             } else {
                 // Incorrect, but there are still lives remaining.
@@ -232,10 +234,15 @@ const hangmanWins = ({ channel, client, user, id, channelScores }) => {
     if (win === 0) {
         client.say(channel, `@${user["display-name"]} You are have 0 wins!`);
     } else {
-        client.say(channel, `@${user["display-name"]} You are in ${ordinalSuffix(place)} place with ${win} wins!`)
+        client.say(channel, `@${user["display-name"]} You are in ${ordinalSuffix(place)} place with ${win} wins!`);
     }
 };
 
+/**
+ * Command: !stats
+ * Returns the number of total games played and wins on a channel.
+ * 1 minute cooldown to prevent spam.
+ */
 const hangmanStats = ({channel, client, user, channelScores }) => {
     if (statsCooldown > Date.now()) {
         return;
@@ -245,6 +252,11 @@ const hangmanStats = ({channel, client, user, channelScores }) => {
     client.say(channel, `@${user["display-name"]} There is a ${convertPercentage(win, total)} win rate, with with ${win} wins and ${total} total games played.`);
 }
 
+/**
+ * Command: !leaderboard
+ * Returns the top 10 players of Hangman on a channel.
+ * 1 minute cooldown to prevent spam.
+ */
 const hangmanLeaderboard = ({channel, client, user, channelScores }) => {
     if (scoreboardCooldown > Date.now()) {
         return;
