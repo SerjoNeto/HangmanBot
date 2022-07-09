@@ -8,7 +8,10 @@ exports.mainCommands = {
 exports.hangmanCommands = {
 	START: '!start',
 	END: '!end',
-	GUESS: '!guess'
+	GUESS: '!guess',
+	WINS: '!wins',
+	STATS: '!stats',
+	LEADERBOARD: '!leaderboard'
 }
 
 exports.settingCommands = {

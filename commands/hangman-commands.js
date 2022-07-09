@@ -1,6 +1,7 @@
 const { getRandomWord } = require('../data/model/dictionary');
 const { hangmanCommands } = require('../utils/commands');
 const { compareLists } = require('../utils/lists');
+const { ordinalSuffix, convertPercentage } = require('../utils/numbers');
 const { isAdmin, isSub } = require('../utils/users');
 // HANGMAN VARIABLES
 
@@ -20,6 +21,13 @@ const guessed = [];
 let word = [];
 /* Current progress of Hangman word guess. In char array for faster complexity. */
 let progress = [];
+
+/** Time when cooldown ends for wins command. 1 minute. */
+let winsCooldown = 0;
+/** Time when cooldown down ends for scoreboard command. 1 minute. */
+let scoreboardCooldown = 0;
+/** Time when cooldown down ends for stats command. 1 minute. */
+let statsCooldown = 0;
 
 /**
  * 
@@ -210,10 +218,53 @@ const hangmanGuess = ({ channel, client, user, channelSettings, channelScores, m
     }
 };
 
+/**
+ * Command: !wins
+ * Returns the number of wins a user has and their place on their keyboard.
+ * 1 minute cooldown to prevent spam.
+ */
+const hangmanWins = ({ channel, client, user, id, channelScores }) => {
+    if (winsCooldown > Date.now()) {
+        return;
+    } 
+    winsCooldown = Date.now() + (1000 * 60);
+    const [win, place] = channelScores.getWinsAndPlaceById(id);
+    if (win === 0) {
+        client.say(channel, `@${user["display-name"]} You are have 0 wins!`);
+    } else {
+        client.say(channel, `@${user["display-name"]} You are in ${ordinalSuffix(place)} place with ${win} wins!`)
+    }
+};
+
+const hangmanStats = ({channel, client, user, channelScores }) => {
+    if (statsCooldown > Date.now()) {
+        return;
+    }
+    statsCooldown = Date.now() + (1000 * 60);
+    const [win, total] = channelScores.getChannelWins();
+    client.say(channel, `@${user["display-name"]} There is a ${convertPercentage(win, total)} win rate, with with ${win} wins and ${total} total games played.`);
+}
+
+const hangmanLeaderboard = ({channel, client, user, channelScores }) => {
+    if (scoreboardCooldown > Date.now()) {
+        return;
+    }
+    scoreboardCooldown = Date.now() + (1000 * 60);
+    const topTen = channelScores.getTopTen();
+    if (topTen.length === 0) {
+        client.say(channel, `There is currently nobody on the leaderboard.`);
+    } else {
+        client.say(channel, `TOP 10 HANGMAN PLAYERS: ${topTen}.`);
+    }
+}
+
 module.exports = {
     isHangmanStarted,
     isGuess,
 	hangmanStart,
 	hangmanEnd,
-    hangmanGuess
+    hangmanGuess,
+    hangmanWins,
+    hangmanStats,
+    hangmanLeaderboard
 };

@@ -5,7 +5,7 @@ const { ChannelSettings } = require('../data/model/settings');
 const { ChannelScores } = require('../data/model/scores')
 const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
-const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-commands');
+const { isGuess, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats } = require('./hangman-commands');
 const { isAdmin } = require('../utils/users');
 const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, settingAuto, showSettings } = require('./setting-commands');
 
@@ -111,6 +111,9 @@ function createNewHangmanClient(id, name) {
 			[hangmanCommands.START]: () => hangmanStart(hangmanProps),
 			[hangmanCommands.END]: () => hangmanEnd(hangmanProps),
 			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelSettings, channelScores, message }),
+			[hangmanCommands.WINS]: () => hangmanWins({ ...hangmanProps, id, channelScores }),
+			[hangmanCommands.STATS]: () => hangmanStats({ ...hangmanProps, channelScores} ),
+			[hangmanCommands.LEADERBOARD]: () => hangmanLeaderboard({ ...hangmanProps, channelScores })
 		}
 
 		let command;

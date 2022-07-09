@@ -74,14 +74,15 @@ class ChannelScores {
     }
 
     /**
-     * Add one win to the user in the scoreboard list.
+     * Add one win to the user in the scoreboard list, and sorts the list.
      * @param {String} user Username of winner
      * @param {String} id ID of winner
      */
     addToScoreBoard(user, id) {
-        if ((this.#scoreboard).filter(e => e.id === id).length > 0) {
+        const filteredList = (this.#scoreboard).filter(e => e.id === id);
+        if (filteredList.length > 0) {
             // ID already exists.
-            const userScoreBoard = (this.#scoreboard).filter(e => e.id === id)[0];
+            const userScoreBoard = filteredList[0];
             // Update Twitch name if changed.
             if (userScoreBoard.user !== user) {
                 userScoreBoard.user = user;
@@ -95,6 +96,7 @@ class ChannelScores {
             newScoreObject["wins"] = 1;
             (this.#scoreboard).push(newScoreObject);
         }
+        (this.#scoreboard).sort((a, b) => b.wins - a.wins);
     }
 
     /**
@@ -131,6 +133,38 @@ class ChannelScores {
         this.saveScores();
     }
 
+    /**
+     * Returns the number of Hangman wins a user has and their position in the scoreboard.
+     * @param {String} userID String of user ID
+     * @returns List in order of [wins, place]
+     */
+    getWinsAndPlaceById(userID) {
+        const filteredList = (this.#scoreboard).filter(e => e.id === userID);
+        if (filteredList.length > 0) {
+            const userWins = (filteredList[0]).wins;
+            const place = (this.#scoreboard).map(e => e.id).indexOf(userID);
+            return [userWins, place + 1];
+        } else {
+            return [0, -1];
+        }
+    }
+
+    /**
+     * Get the top 10 Hangman players on a channel.
+     * @returns String of top 10 Hangman winners
+     */
+    getTopTen() {
+        const shortList = (this.#scoreboard).slice(0, 10).map(e => `${e.user}: ${e.wins} wins`);
+        return shortList.join(", ");
+    }
+
+    /**
+     * Returns overall stats about Hangman on a channel.
+     * @returns Wins, Total games of a channel
+     */
+    getChannelWins() {
+        return [(this.#wins), (this.#total)];
+    }
 }
 
 module.exports = {
