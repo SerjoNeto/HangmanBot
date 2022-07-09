@@ -42,10 +42,10 @@ class ChannelScores {
      * @param {Object} scoresJSON Saved and parsed scores JSON to set
      */
     setScoresJSON(scoresJSON) {
-        this.#id = scoresJSON.id
-        this.#wins = scoresJSON.wins
-        this.#total = scoresJSON.total
-        this.#scoreboard = scoresJSON.scoreboard
+        this.#id = scoresJSON.id;
+        this.#wins = scoresJSON.wins;
+        this.#total = scoresJSON.total;
+        this.#scoreboard = scoresJSON.scoreboard;
     }
 
     /**
@@ -71,32 +71,6 @@ class ChannelScores {
     saveScores() {
         const file = `./logs/${this.#id}/scores.json`
         fs.writeFile(file, JSON.stringify(this.getScoresJSON(), null, 4), (err) => {});
-    }
-
-    /**
-     * Add one win to the user in the scoreboard list, and sorts the list.
-     * @param {String} user Username of winner
-     * @param {String} id ID of winner
-     */
-    addToScoreBoard(user, id) {
-        const filteredList = (this.#scoreboard).filter(e => e.id === id);
-        if (filteredList.length > 0) {
-            // ID already exists.
-            const userScoreBoard = filteredList[0];
-            // Update Twitch name if changed.
-            if (userScoreBoard.user !== user) {
-                userScoreBoard.user = user;
-            }
-            userScoreBoard.wins++;
-        } else {
-            // Id does not exist, so create new object for it. 
-            const newScoreObject = {};
-            newScoreObject["id"] = id;
-            newScoreObject["user"] = user;
-            newScoreObject["wins"] = 1;
-            (this.#scoreboard).push(newScoreObject);
-        }
-        (this.#scoreboard).sort((a, b) => b.wins - a.wins);
     }
 
     /**
@@ -131,6 +105,32 @@ class ChannelScores {
     addTotal() {
         this.#total++;
         this.saveScores();
+    }
+
+    /**
+     * Add one win to the user in the scoreboard list, and sorts the list.
+     * @param {String} user Username of winner
+     * @param {String} id ID of winner
+     */
+    addToScoreBoard(user, id) {
+        const filteredList = (this.#scoreboard).filter(e => e.id === id);
+        if (filteredList.length > 0) {
+            // ID already exists.
+            const userScoreBoard = filteredList[0];
+            // Update Twitch name if changed.
+            if (userScoreBoard.user !== user) {
+                userScoreBoard.user = user;
+            }
+            userScoreBoard.wins++;
+        } else {
+            // Id does not exist, so create new object for it.
+            const newScoreObject = {};
+            newScoreObject["id"] = id;
+            newScoreObject["user"] = user;
+            newScoreObject["wins"] = 1;
+            (this.#scoreboard).push(newScoreObject);
+        }
+        (this.#scoreboard).sort((a, b) => b.wins - a.wins);
     }
 
     /**

@@ -1,3 +1,4 @@
+/** List of valid PlayHangmanBot commands. */
 exports.mainCommands = {
 	ADD: '!add',
 	REMOVE: '!remove',
@@ -5,15 +6,19 @@ exports.mainCommands = {
 	INFO: '!info'
 }
 
+/** List of valid Hangman commands. */
 exports.hangmanCommands = {
 	START: '!start',
 	END: '!end',
 	GUESS: '!guess',
 	WINS: '!wins',
 	STATS: '!stats',
-	LEADERBOARD: '!leaderboard'
+	LEADERBOARD: '!leaderboard',
+	HELP: '!help',
+	HANGMAN: '!hangman'
 }
 
+/** List of valid Hangman setting commands. */
 exports.settingCommands = {
 	LETTERCOOLDOWN: `!letter`,
 	WORDCOOLDOWN: `!word`,

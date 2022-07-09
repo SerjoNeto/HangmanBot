@@ -1,8 +1,12 @@
 const fs = require('fs');
 
 let dictionary = [];
-const dictionaryLocation = "./private/real-dict.txt";
+const dictionaryLocation = "./private/dict.txt";
 
+/**
+ * Loads the dictionary from dictionaryLocation and puts it into a dictionary list.
+ * Has a 9 4-letter list in case the file doesn't exist.
+ */
 function loadDictionary() {
 	try {
 	    dictionary = fs.readFileSync(dictionaryLocation).toString().split("\n");
@@ -11,6 +15,10 @@ function loadDictionary() {
 	}
 }
 
+/**
+ * Get a random word from the dictionary.
+ * @returns {String} Word from the dictionary list.
+ */
 function getRandomWord() {
 	if(dictionary === undefined || dictionary.length === 0) {
 		loadDictionary();

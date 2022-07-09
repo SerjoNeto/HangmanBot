@@ -1,14 +1,17 @@
 const fs = require('fs');
 
-const dataPath = './private/name-data.json';
+const dataPath = './private/name.json';
 
+// Object with key [id] and object [Twitch username]
 let nameId = {};
 
-// Checks if [id] exists in the nameId list.
-const hasId = (id) => (id in nameId);
+// Checks if nameId object has parameter id.
+function hasId(id) {
+	return (id in nameId);
+}
 
 // Returns the name string for a [id], null if does not exist.
-const getName = (id) => {
+function getName(id) {
 	if (hasId(id)) {
 		return nameId[id];
 	} else {
@@ -41,12 +44,12 @@ function deleteName(id) {
 }
 
 // Loads the Name ID data from the JSON file. Returns true if successful.
-function loadNameIdData(client, channel) {
+function loadNameIdData() {
     try {
     	var userIdJSON = fs.readFileSync(dataPath, 'utf-8');
-        nameId = JSON.parse(userIdJSON);
-        return nameId;
+        return JSON.parse(userIdJSON);
     } catch (e) {
+		saveNameIdData();
         return null;
     }
 }
@@ -61,6 +64,6 @@ module.exports = {
 	getName,
 	addName,
 	deleteName,
-	loadNameIdData,
-	transferName
+	transferName,
+	loadNameIdData
 }

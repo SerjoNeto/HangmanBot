@@ -3,7 +3,6 @@ const { hangmanCommands } = require('../utils/commands');
 const { compareLists } = require('../utils/lists');
 const { ordinalSuffix, convertPercentage } = require('../utils/numbers');
 const { isAdmin, isSub } = require('../utils/users');
-// HANGMAN VARIABLES
 
 /* String list of users who are on cooldown on guessing letters. */
 const letterCooldownUser = {};
@@ -22,15 +21,19 @@ let word = [];
 /* Current progress of Hangman word guess. In char array for faster complexity. */
 let progress = [];
 
-/** Time when cooldown ends for wins command. 1 minute. */
+/** Time when cooldown ends for wins command. 2 minutes. */
 let winsCooldown = 0;
-/** Time when cooldown down ends for scoreboard command. 1 minute. */
+/** Time when cooldown down ends for scoreboard command. 2 minutes. */
 let scoreboardCooldown = 0;
-/** Time when cooldown down ends for stats command. 1 minute. */
+/** Time when cooldown down ends for stats command. 2 minutes. */
 let statsCooldown = 0;
+/** Time when cooldown down ends for help command. 2 minutes. */
+let helpCooldown = 0;
+/** Time when cooldown down ends for curreng Hangman status command. 2 minutes. */
+let currentCooldown = 0;
 
 /**
- * 
+ * Checks if there is a Hangman game in progress.
  * @returns True if Hangman game is in progress, false if not.
  */
 function isHangmanStarted() {
@@ -89,6 +92,7 @@ function updateScore(channelScores, isWin, name, id) {
         channelScores.addTotal();
     }
 }
+
 /*
  * Command: !start
  * Permissions: Broadcaster and mods only.
@@ -223,13 +227,14 @@ const hangmanGuess = ({ channel, client, user, channelSettings, channelScores, m
 /**
  * Command: !wins
  * Returns the number of wins a user has and their place on their keyboard.
- * 1 minute cooldown to prevent spam.
+ * 2 minute cooldown to prevent spam.
  */
 const hangmanWins = ({ channel, client, user, id, channelScores }) => {
     if (winsCooldown > Date.now()) {
         return;
     } 
-    winsCooldown = Date.now() + (1000 * 60);
+    winsCooldown = Date.now() + (1000 * 120);
+
     const [win, place] = channelScores.getWinsAndPlaceById(id);
     if (win === 0) {
         client.say(channel, `@${user["display-name"]} You are have 0 wins!`);
@@ -241,13 +246,14 @@ const hangmanWins = ({ channel, client, user, id, channelScores }) => {
 /**
  * Command: !stats
  * Returns the number of total games played and wins on a channel.
- * 1 minute cooldown to prevent spam.
+ * 2 minute cooldown to prevent spam.
  */
 const hangmanStats = ({channel, client, user, channelScores }) => {
     if (statsCooldown > Date.now()) {
         return;
     }
-    statsCooldown = Date.now() + (1000 * 60);
+    statsCooldown = Date.now() + (1000 * 120);
+
     const [win, total] = channelScores.getChannelWins();
     client.say(channel, `@${user["display-name"]} There is a ${convertPercentage(win, total)} win rate, with with ${win} wins and ${total} total games played.`);
 }
@@ -255,19 +261,52 @@ const hangmanStats = ({channel, client, user, channelScores }) => {
 /**
  * Command: !leaderboard
  * Returns the top 10 players of Hangman on a channel.
- * 1 minute cooldown to prevent spam.
+ * 2 minute cooldown to prevent spam.
  */
 const hangmanLeaderboard = ({channel, client, user, channelScores }) => {
     if (scoreboardCooldown > Date.now()) {
         return;
     }
-    scoreboardCooldown = Date.now() + (1000 * 60);
+    scoreboardCooldown = Date.now() + (1000 * 120);
+    
     const topTen = channelScores.getTopTen();
     if (topTen.length === 0) {
-        client.say(channel, `There is currently nobody on the leaderboard.`);
+        client.say(channel, `@${user["display-name"]} There is currently nobody on the leaderboard.`);
     } else {
-        client.say(channel, `TOP 10 HANGMAN PLAYERS: ${topTen}.`);
+        client.say(channel, `@${user["display-name"]} TOP ${topTen.length} HANGMAN PLAYERS: ${topTen}.`);
     }
+}
+
+/**
+ * Command: !hangman
+ * Returns the current Hangman status on this channel.
+ * 2 minute cooldown to prevent spam.
+ */
+const hangmanCurrent = ({ channel, client, user }) => {
+    if (currentCooldown > Date.now()) {
+        return;
+    }
+    currentCooldown = Date.now() + (1000 * 20);
+
+    if (!started) {
+        client.say(channel, `@${user["display-name"]} There is currently no Hangman game in progress.`)
+    } else {
+        client.say(channel, `@${user["display-name"]} Lives: ${lives}. Guessed: ${guessed.join(', ')}. Progress: ${progress.join('')}. Use "!guess <letter or word here>" to play.`)
+    }
+}
+
+/**
+ * Command: !help
+ * Tells the user where they can read more about this Hangman Bot.
+ * 2 minute cooldown to prevent spam.
+ */
+const hangmanHelp = ({ channel, client, user }) => {
+    if (helpCooldown > Date.now()) {
+        return;
+    }
+    helpCooldown = Date.now() + (1000 * 120);
+
+    client.say(channel, `@${user["display-name"]} https://github.com/ys8672/HangmanBot`);
 }
 
 module.exports = {
@@ -278,5 +317,7 @@ module.exports = {
     hangmanGuess,
     hangmanWins,
     hangmanStats,
-    hangmanLeaderboard
+    hangmanLeaderboard,
+    hangmanCurrent,
+    hangmanHelp
 };

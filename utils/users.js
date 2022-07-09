@@ -13,5 +13,5 @@ exports.isAdmin = (user) => {
  * @returns {Boolean} True if sub, false if not.
  */
 exports.isSub = (user) => {
-    return user.badges && ('subscriber' in user.badges|| 'founder' in user.badges);
+    return user.badges && ('subscriber' in user.badges || 'founder' in user.badges);
 };

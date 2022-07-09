@@ -1,4 +1,3 @@
-const { mainCommands } = require('../utils/commands');
 const { hasId, getName, addName, deleteName, transferName } = require('../data/name');
 const { createNewHangmanClient } = require('../client/new-hangman-client');
 
@@ -57,19 +56,18 @@ const transferHangmanClient = ({ client, channel, name, id }) => {
 		client.say(channel, `@${name}, your Hangman Bot has been successfully transferred!`)
 	} else {
 		// Cannot transfer account.
-		client.say(channel, `Sorry @${name}, transfer failed. Transfers can only work if you changed your Twitch username and have a previous live Hangman Bot running on your channel.`);
+		client.say(channel, `Sorry @${name}, transfer failed. Transfers can only work if you changed your Twitch username and had a previous Hangman Bot running on your channel.`);
 		return;
 	}
 };
 
 // Automatically starts Hangman games for nameId
-function autoStartHangmanClient( client, channel, nameId ) {
+function autoStartHangmanClient(nameId) {
 	for (const [id, name] of Object.entries(nameId)) {
 		const hangmanClient = createNewHangmanClient(id, name);
 		liveHangmanClients[id] = hangmanClient;
 	}
 };
-
 
 module.exports = {
 	addHangmanClient,
