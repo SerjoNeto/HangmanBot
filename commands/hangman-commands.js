@@ -1,4 +1,4 @@
-const { getRandomWord } = require('../data/model/dictionary');
+const { getRandomWord } = require('../data/dictionary');
 const { hangmanCommands } = require('../utils/commands');
 const { compareLists } = require('../utils/lists');
 const { ordinalSuffix, convertPercentage } = require('../utils/numbers');

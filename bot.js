@@ -1,15 +1,9 @@
 const tmi = require('tmi.js');
-
 const { hangmanBotOAuth } = require('./private/password');
 const { mainCommands } = require('./utils/commands');
-const { 
-    addHangmanClient, 
-    removeHangmanClient,
-    transferHangmanClient,
-    autoStartHangmanClient,
-} = require('./commands/main-commands');
-const { loadNameIdData } = require('./data/model/name-functions');
-const { loadDictionary } = require('./data/model/dictionary');
+const { addHangmanClient, removeHangmanClient,transferHangmanClient,autoStartHangmanClient } = require('./commands/main-commands');
+const { loadNameIdData } = require('./data/name');
+const { loadDictionary } = require('./data/dictionary');
 
 const hangmanChannel = 'PlayHangmanBot';
 const options = {
@@ -57,15 +51,7 @@ client.on('message', (channel, user, message, self) => {
         [mainCommands.TRANSFER]: () => transferHangmanClient(props)
     }
 
-    let command;
-    switch(true){
-        default:
-            command = message;
-            break;
-    }
-
-    /* Node versions < v14 do not support optional chaining (null safe operator) */
-    if(chatCommands[command]) {
-        chatCommands[command]();
+    if(chatCommands[message]) {
+        chatCommands[message]();
     }
 });

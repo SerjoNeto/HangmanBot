@@ -1,13 +1,13 @@
 const tmi = require('tmi.js');
 const fs = require('fs');
 const log4js = require('log4js');
-const { ChannelSettings } = require('../data/model/settings');
-const { ChannelScores } = require('../data/model/scores')
+const { ChannelSettings } = require('../data/settings');
+const { ChannelScores } = require('../data/scores')
 const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
-const { isGuess, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats } = require('./hangman-commands');
+const { isGuess, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats } = require('../commands/hangman-commands');
 const { isAdmin } = require('../utils/users');
-const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, settingAuto, showSettings } = require('./setting-commands');
+const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, settingAuto, showSettings } = require('../commands/setting-commands');
 
 /**
   * Creates a new Hangman client to play Hangman on.

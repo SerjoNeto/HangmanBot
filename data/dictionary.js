@@ -1,13 +1,13 @@
 const fs = require('fs');
 
 let dictionary = [];
-const dictionaryLocation = "./data/real-dict.txt";
+const dictionaryLocation = "./private/real-dict.txt";
 
 function loadDictionary() {
 	try {
 	    dictionary = fs.readFileSync(dictionaryLocation).toString().split("\n");
 	} catch {
-		dictionary = ['error'];
+		dictionary = ['ally', 'beta', 'cool', 'deal', 'else', 'flew', 'good', 'hope', 'ibex'];
 	}
 }
 

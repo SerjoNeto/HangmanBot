@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const dataPath = './data/name-data.json';
+const dataPath = './private/name-data.json';
 
 let nameId = {};
 
