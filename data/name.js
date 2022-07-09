@@ -47,7 +47,8 @@ function deleteName(id) {
 function loadNameIdData() {
     try {
     	var userIdJSON = fs.readFileSync(dataPath, 'utf-8');
-        return JSON.parse(userIdJSON);
+        nameId = JSON.parse(userIdJSON);
+        return nameId;
     } catch (e) {
 		saveNameIdData();
         return null;
