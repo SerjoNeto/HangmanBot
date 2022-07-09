@@ -2,6 +2,7 @@ const tmi = require('tmi.js');
 const fs = require('fs');
 const log4js = require('log4js');
 const { ChannelSettings } = require('../data/model/settings');
+const { ChannelScores } = require('../data/model/scores')
 const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
 const { isGuess, hangmanStart, hangmanEnd, hangmanGuess } = require('./hangman-commands');
@@ -33,6 +34,10 @@ function createNewHangmanClient(id, name) {
 	// Make a settings class to keep track of channel settings
 	const channelSettings = new ChannelSettings();
 	channelSettings.loadSettings(id);
+
+	//Make a scores class to keep track of Hangman scores
+	const channelScores = new ChannelScores(id);
+	channelScores.loadScores();
 
 	// Create the Twitch Bot client.
 	const hangmanOptions = {
@@ -105,7 +110,7 @@ function createNewHangmanClient(id, name) {
 		const chatCommands = {
 			[hangmanCommands.START]: () => hangmanStart(hangmanProps),
 			[hangmanCommands.END]: () => hangmanEnd(hangmanProps),
-			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelSettings, message }),
+			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelSettings, channelScores, message }),
 		}
 
 		let command;

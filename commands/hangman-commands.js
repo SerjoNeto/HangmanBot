@@ -68,6 +68,19 @@ function autoStartHangman(channel, client, channelSettings) {
         started = false;
     }
 }
+
+/**
+ * Updates the Hangman score in this channel. 
+ * @param {Object} channelScores Class for updating scores
+ * @param {Boolean} isWin Increment win counter if win
+ */
+function updateScore(channelScores, isWin, name, id) {
+    if (isWin) {
+        channelScores.addWin(name, id);
+    } else {
+        channelScores.addTotal();
+    }
+}
 /*
  * Command: !start
  * Permissions: Broadcaster and mods only.
@@ -100,7 +113,7 @@ const isGuess = message => (message.startsWith(hangmanCommands.GUESS) && message
  * Guesses a letter or a word for a game.
  */
 //TODO: make guesses alphabet only.
-const hangmanGuess = ({ channel, client, user, channelSettings, message }) => {
+const hangmanGuess = ({ channel, client, user, channelSettings, channelScores, message }) => {
     if (!started || (channelSettings.getSubOnly() && !isSub(user))) return;
 
     let guessMessage = message.split(" ");
@@ -140,6 +153,7 @@ const hangmanGuess = ({ channel, client, user, channelSettings, message }) => {
             if(compareLists(word, progress)) {
                 // Winner, so upload stats and announce win.
                 client.say(channel, `@${user["display-name"]} You win! Word is "${word.join('')}".`);
+                updateScore(channelScores, true, user["display-name"], user["user-id"]);
                 autoStartHangman(channel, client, channelSettings);
             } else {
                 //Correct, but more letters to be guessed.
@@ -152,6 +166,7 @@ const hangmanGuess = ({ channel, client, user, channelSettings, message }) => {
             if(lives === 0){
                 // Game over
                 client.say(channel, `@${user["display-name"]} GAME OVER. No "${charGuess}". Guessed: ${guessed.join(', ')}. Final progress: ${progress.join('')}. Actual Word: "${word.join('')}".`);
+                updateScore(channelScores, false, user["display-name"], user["user-id"]);
                 autoStartHangman(channel, client, channelSettings);
             } else {
                 // Incorrect, but there are still lives remaining.
@@ -175,12 +190,14 @@ const hangmanGuess = ({ channel, client, user, channelSettings, message }) => {
 
         if(wordGuess === word.join('')) {
             client.say(channel, `@${user["display-name"]} You win! Word is "${word.join('')}".`);
+            updateScore(channelScores, true, user["display-name"], user["user-id"]);
             autoStartHangman(channel, client, channelSettings);
         } else {
             lives--;
             if(lives === 0){
                 // Game over
                 client.say(channel, `@${user["display-name"]} GAME OVER. The word is not "${wordGuess}". Guessed: ${guessed.join(', ')}. Final progress: ${progress.join('')}. Actual Word: "${word.join('')}".`);
+                updateScore(channelScores, false, user["display-name"], user["user-id"]);
                 autoStartHangman(channel, client, channelSettings);
             } else {
                 // Incorrect, but there are still lives remaining.
