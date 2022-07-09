@@ -273,7 +273,7 @@ const hangmanLeaderboard = ({channel, client, user, channelScores }) => {
     if (topTen.length === 0) {
         client.say(channel, `@${user["display-name"]} There is currently nobody on the leaderboard.`);
     } else {
-        client.say(channel, `@${user["display-name"]} TOP ${topTen.length} HANGMAN PLAYERS: ${topTen}.`);
+        client.say(channel, `@${user["display-name"]} TOP HANGMAN PLAYERS: ${topTen}.`);
     }
 }
 
