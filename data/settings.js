@@ -21,8 +21,8 @@ class ChannelSettings {
      */
     constructor(userId) {
         this.#id = userId
-        this.#letterCooldown = 0
-        this.#wordCooldown = 0
+        this.#letterCooldown = 30
+        this.#wordCooldown = 60
         this.#subOnly = false
         this.#autoPlay = false
     }
