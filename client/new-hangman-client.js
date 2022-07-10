@@ -1,28 +1,39 @@
 const tmi = require('tmi.js');
 const fs = require('fs');
+const log4js = require('log4js');
 const { ChannelSettings } = require('../data/settings');
 const { ChannelScores } = require('../data/scores');
 const { ChannelHangman } = require('../data/hangman');
-const { Logger } = require('../data/logger')
 const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
 const { isGuess, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats, hangmanCurrent, hangmanHelp } = require('../commands/hangman-commands');
 const { isAdmin } = require('../utils/users');
 const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, settingAuto, showSettings } = require('../commands/setting-commands');
 
+log4js.configure({
+	appenders: {
+	  everything: {
+		type: 'multiFile', base: 'logs/all/', property: 'userID', extension: '.log', maxLogSize: 10485760, backups: 1, compress: true
+	  }
+	},
+	categories: {
+	  default: { appenders: [ 'everything' ], level: 'debug'}
+	}
+});
 /**
   * Creates a new Hangman client to play Hangman on.
   * @param name Twitch channel name
   */
 function createNewHangmanClient(id, name) {
+	// Create logger
+	const logger = log4js.getLogger(id);
+	logger.addContext('userID', id);
+
 	// Create folder in logs
 	const dir = `./logs/${id}`
 	if(!fs.existsSync(dir)) {
 		fs.mkdirSync(dir);
 	}
-
-	// Make a Logger class to log commands
-	const channelLogger = new Logger(id, name);
 
 	// Make a settings class to keep track of channel settings
 	const channelSettings = new ChannelSettings(id);
@@ -62,7 +73,7 @@ function createNewHangmanClient(id, name) {
 	newHangmanClient.on('message', (channel, user, message, self) => {
 		// Ignore self messages and non-commands while logging self messages.
 		if(!self && !message.startsWith("!")) return;
-		channelLogger.printToLog(user["display-name"], message);
+		logger.debug(`${user["display-name"]}: ${message}`);
 		if(self) return;
 
 		const client = newHangmanClient;
