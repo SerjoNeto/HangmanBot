@@ -1,8 +1,9 @@
 const tmi = require('tmi.js');
 const fs = require('fs');
-const log4js = require('log4js');
 const { ChannelSettings } = require('../data/settings');
-const { ChannelScores } = require('../data/scores')
+const { ChannelScores } = require('../data/scores');
+const { ChannelHangman } = require('../data/hangman');
+const { Logger } = require('../data/logger')
 const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
 const { isGuess, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats, hangmanCurrent, hangmanHelp } = require('../commands/hangman-commands');
@@ -14,30 +15,25 @@ const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCool
   * @param name Twitch channel name
   */
 function createNewHangmanClient(id, name) {
-	// Create logs.
-	log4js.configure({
-		appenders: { 
-			everything: { type: "dateFile", filename: `./logs/${id}/hangman-log.log` } 
-		},
-		categories: { 
-			default: { appenders: ["everything"], level: "debug" } 
-		}
-	});
-	var logger = log4js.getLogger(`${name}`);
-
 	// Create folder in logs
 	const dir = `./logs/${id}`
 	if(!fs.existsSync(dir)) {
 		fs.mkdirSync(dir);
 	}
 
+	// Make a Logger class to log commands
+	const channelLogger = new Logger(id, name);
+
 	// Make a settings class to keep track of channel settings
 	const channelSettings = new ChannelSettings(id);
 	channelSettings.loadSettings();
 
-	//Make a scores class to keep track of Hangman scores
+	// Make a scores class to keep track of Hangman scores
 	const channelScores = new ChannelScores(id);
 	channelScores.loadScores();
+
+	// Creates a custom Hangman data class to keep track of data unique to a channel
+	const channelHangman = new ChannelHangman();
 
 	// Create the Twitch Bot client.
 	const hangmanOptions = {
@@ -66,7 +62,7 @@ function createNewHangmanClient(id, name) {
 	newHangmanClient.on('message', (channel, user, message, self) => {
 		// Ignore self messages and non-commands while logging self messages.
 		if(!self && !message.startsWith("!")) return;
-		logger.debug(`${user["display-name"]}: ${message}`);
+		channelLogger.printToLog(user["display-name"], message);
 		if(self) return;
 
 		const client = newHangmanClient;
@@ -75,8 +71,8 @@ function createNewHangmanClient(id, name) {
 		if (isAdmin(user)) {
 			const adminProps = { channel, client, user, channelSettings }
 			const adminCommands = {
-				[settingCommands.LETTERCOOLDOWN]: () => settingLetterCooldown({ ...adminProps, message }),
-				[settingCommands.WORDCOOLDOWN]: () => settingWordCooldown({...adminProps, message }),
+				[settingCommands.LETTERCOOLDOWN]: () => settingLetterCooldown({ ...adminProps, channelHangman, message }),
+				[settingCommands.WORDCOOLDOWN]: () => settingWordCooldown({...adminProps, channelHangman, message }),
 				[settingCommands.SUBONLY]: () => settingSubOnly({ ...adminProps, message }),
 				[settingCommands.AUTO]: () => settingAuto({ ...adminProps, message }),
 				[settingCommands.SETTINGS]: () => showSettings({ ...adminProps })
@@ -108,13 +104,13 @@ function createNewHangmanClient(id, name) {
 		// Commands for everybody
 		const hangmanProps = { channel, client, user };
 		const chatCommands = {
-			[hangmanCommands.START]: () => hangmanStart(hangmanProps),
-			[hangmanCommands.END]: () => hangmanEnd(hangmanProps),
-			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelSettings, channelScores, message }),
+			[hangmanCommands.START]: () => hangmanStart({ ...hangmanProps, channelHangman }),
+			[hangmanCommands.END]: () => hangmanEnd({ ...hangmanProps, channelHangman }),
+			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelHangman, channelSettings, channelScores, message }),
 			[hangmanCommands.WINS]: () => hangmanWins({ ...hangmanProps, id, channelScores }),
 			[hangmanCommands.STATS]: () => hangmanStats({ ...hangmanProps, channelScores} ),
 			[hangmanCommands.LEADERBOARD]: () => hangmanLeaderboard({ ...hangmanProps, channelScores }),
-			[hangmanCommands.HANGMAN]: () => hangmanCurrent(hangmanProps),
+			[hangmanCommands.HANGMAN]: () => hangmanCurrent({ ...hangmanProps, channelHangman }),
 			[hangmanCommands.HELP]: () => hangmanHelp(hangmanProps)
 		}
 

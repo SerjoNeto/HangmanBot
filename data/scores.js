@@ -5,7 +5,7 @@ const fs = require('fs');
  */
 class ChannelScores {
 
-    #id
+    #id;
     #wins;
     #total;
     #scoreboard;
