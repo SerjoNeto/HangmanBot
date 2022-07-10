@@ -32,8 +32,8 @@ function createNewHangmanClient(id, name) {
 	}
 
 	// Make a settings class to keep track of channel settings
-	const channelSettings = new ChannelSettings();
-	channelSettings.loadSettings(id);
+	const channelSettings = new ChannelSettings(id);
+	channelSettings.loadSettings();
 
 	//Make a scores class to keep track of Hangman scores
 	const channelScores = new ChannelScores(id);
