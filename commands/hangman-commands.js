@@ -3,21 +3,6 @@ const { hangmanCommands } = require('../utils/commands');
 const { ordinalSuffix, convertPercentage } = require('../utils/numbers');
 const { isAdmin, isSub } = require('../utils/users');
 
-    // /* String list of users who are on cooldown on guessing letters. */
-    //  const letterCooldownUser = 0;
-    // /* String list of users who are on cooldown on guessing words. */
-    //  const wordCooldownUser = 0;
-    // /* Boolean for whether a game of Hangman has started. */
-    //  const started = 0;
-    // /* Hangman guesses remaining. */
-    // const lives = 0;
-    // /* String list of letters/words that have been guessed. */
-    //  const guessed = 0;
-    // /* Word that Hangman bot randomly selected for the game. */
-    //  const word = 0;
-    // /* Current progress of Hangman word guess. In char array for faster complexity. */
-    //  const progress = 0;
-
 /**
  * Reused function to start a Hangman game.
  * @param {Object} channel Channel to print game start.
