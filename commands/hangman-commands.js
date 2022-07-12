@@ -103,7 +103,7 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
         client.say(channel, `@${user["display-name"]} Sorry, Hangman games are currently sub only.`);
     } else if ((guessMessage.length !== 2 || (guessMessage[1].length !== 1 && guessMessage[1].length !== channelHangman.getWordLength())) || !(/^[a-zA-Z]+$/.test(guessMessage[1]))) {
         // Invalid guess.
-        client.say(channel, `@${user["display-name"]} Invalid "!guess <letter/word>" usage.`);
+        client.say(channel, `@${user["display-name"]} Invalid "!guess <letter/word>" usage. Possible reasons: Incorrect length, non-alphabetical characters.`);
     } else if (channelHangman.isInGuessed(guessMessage[1].toUpperCase())) {
         // Already guessed.
         client.say(channel, `@${user["display-name"]} "${guessMessage[1].toUpperCase()}" has been guessed. Lives: ${channelHangman.getLives()}. Guessed: ${channelHangman.getGuessed()}. Progress: ${channelHangman.getProgress()}.`);
@@ -212,7 +212,7 @@ const hangmanWins = ({ channel, client, user, id, channelScores }) => {
  */
 const hangmanStats = ({channel, client, user, channelScores }) => {
     const [win, total] = channelScores.getChannelWins();
-    client.say(channel, `@${user["display-name"]} There is a ${convertPercentage(win, total)} win rate, with with ${win} wins and ${total} total games played.`);
+    client.say(channel, `@${user["display-name"]} There is a ${convertPercentage(win, total)} win rate, with ${win} wins and ${total} total games played.`);
 }
 
 /**
