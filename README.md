@@ -7,7 +7,7 @@ A very fun Twitch Bot that allows anybody to play [Hangman](https://en.wikipedia
 - Go to [PlayHangmanBot Twitch channel](https://www.twitch.tv/playhangmanbot), type `!add` in the chat. Add PlayHangmanBot as a moderator in your own Twitch channel.
 - Type `!start` on your Twitch channel to start a Hangman game.
 - Anybody in your chat can use `!guess <word/letter>` like `!guess s` to play. 
-- Change some settings like guess cooldowns, only subs can play, auto play.
+- Change some settings like guess cooldowns, sub only mode, auto play, etc.
 - See scores with `!leaderboard`, `!stats`, `!wins`.
 - Have fun!
 
@@ -64,6 +64,7 @@ There are four settings that can be changed currently. To check all the current 
 2. **Word Guess Cooldown**- Same as letter guess cooldown but with words. The commands are `!word`, or `!word <seconds between 0-3600>`.
 3. **Sub Only Games**- If you only want your Twitch subscribers to play Hangman (all tiers), you can change your Hangman games to sub only mode. Use `!subonly` to see the current sub only status. Turn on sub only games with `!subonly on` and turn off with `!subonly off`.
 4. **Auto Start Games**- If you are tired of typing `!start` every time a Hangman games end in chat to start a new one, you can set the bot to automatically start a new Hangman game immediately after the previous one ended. Use `!auto` to check the current auto start status. Turn on auto start games with `!auto on` and turn off with `!auto off`.
+5. **Error Messages**- If you are tired of people spamming Hangman guesses and the bot telling the user why their guess is invalid (still on cooldown, already guessed letter, word length not right, etc.), you can turn this off with `!error off` and on with `!error on`, and check the current state of error message display with `!error`.
 
 ### Check The Leaderboards
 
@@ -95,6 +96,7 @@ The following commands are used on your stream for Hangman.
 - **!word**- Command for word cooldowns. Use `!word` to check the current time in seconds a user has to wait before they can guess another word. Use `!word <number between 0-3600>` like `!word 60` to set the time in seconds. I generally recommend setting this higher than the letter cooldown. This setting cannot be changed during a Hangman game, so make sure you have no active games before changing this!
 - **!subonly**- Command for sub only Hangman games. If this is turned on, only subscribers can play Hangman through guesses. Use `!subonly` to see the current sub only state, and use `!subonly on` to turn on sub only mode, or `!subonly off` to turn off sub only mode.
 - **!auto**- Command for auto start Hangman games. If this is turned on, a new Hangman game will automatically start once the previous game is finished, instead of having to type `!start` every time. Use `!auto` to see the current auto play state, and use `!auto on` to turn on auto play mode, or `!auto off` to turn off auto play mode.
+- **!error**- Command for whether or not to show error messages for Hangman guesses. If this is turned on, the user will be informed the reason why their guess was invalid. Otherwise, the bot will not tell why a guess failed to save space. Use `!error` to see the current error message display state, and use `!error on` to turn on error messages, or `!error off` to turn off error message displays. 
 - **!settings**- Command to check the current Hangman Bot settings for letter/word cooldown, sub only state and auto play state.
 
 **Commands for Everybody**
