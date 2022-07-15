@@ -10,6 +10,7 @@ class ChannelSettings {
     #wordCooldown;
     #subOnly;
     #autoPlay;
+    #error;
 
     /**
      * Settings admins can change for Hangman on a channel
@@ -18,6 +19,7 @@ class ChannelSettings {
      * @param {integer} wordCooldown Time before user is allowed another word guess.
      * @param {boolean} subOnly Only allow subscribers to play.
      * @param {boolean} autoPlay Automatically start another Hangman game when one ends.
+     * @param {boolean} error Show error messages for Hangman in chat.
      */
     constructor(userId) {
         this.#id = userId
@@ -25,6 +27,7 @@ class ChannelSettings {
         this.#wordCooldown = 60
         this.#subOnly = false
         this.#autoPlay = false
+        this.#error = true
     }
 
     /**
@@ -37,7 +40,8 @@ class ChannelSettings {
             letterCooldown: this.#letterCooldown,
             wordCooldown: this.#wordCooldown,
             subOnly: this.#subOnly,
-            autoPlay: this.#autoPlay
+            autoPlay: this.#autoPlay,
+            error: this.#error
         }
         return settingInJSON;
     }
@@ -47,11 +51,12 @@ class ChannelSettings {
      * @param {Object} settingJSON Setting JSON object to change the variables.
      */
     setSettingJSON(settingJSON) {
-        this.#id = settingJSON.id;
-        this.#letterCooldown = settingJSON.letterCooldown;
-        this.#wordCooldown = settingJSON.wordCooldown;
-        this.#subOnly = settingJSON.subOnly;
-        this.#autoPlay = settingJSON.autoPlay;
+        this.#id = settingJSON.id ?? -1;
+        this.#letterCooldown = settingJSON.letterCooldown ?? 30;
+        this.#wordCooldown = settingJSON.wordCooldown ?? 60;
+        this.#subOnly = settingJSON.subOnly ?? false;
+        this.#autoPlay = settingJSON.autoPlay ?? false;
+        this.#error = settingJSON.error ?? true;
     }
 
     /**
@@ -66,6 +71,8 @@ class ChannelSettings {
                 const settingsJson = fs.readFileSync(file, 'utf-8');
                 this.setSettingJSON(JSON.parse(settingsJson));
             } catch {
+                console.log(`SETTINGS FILE READ ERROR ${this.#id}!`);
+            } finally {
                 fs.writeFile(file, JSON.stringify(this.getSettingJSON(), null, 4), (err) => {});
             }
         }
@@ -168,6 +175,29 @@ class ChannelSettings {
             return true;
         }
     }
+
+    /**
+     * Returns current error message display state.
+     * @returns If error messages for Hangman are shown in chat
+     */
+    getError() {
+        return this.#error
+    }
+
+    /**
+     * Sets whether to tell users error messages for Hangman
+     * @param {boolean} state New state to set for error.
+     * @returns True if error message is displayed, false if not.
+     */
+    setError(state) {
+        if (this.#error === state) {
+            return false;
+        } else {
+            this.#error = state;
+            this.saveSettings();
+            return true;
+        }
+    }
     
     /**
      * Prints the settings in a readable format
@@ -175,8 +205,9 @@ class ChannelSettings {
      */
     printSettings() {
         const subOnlyState = this.#subOnly ? "ON" : "OFF";
-        const autoPlayState = this.#autoPlay ? "ON" : "OFF"
-        return `Letter Guess Cooldown: ${this.#letterCooldown} SECOND(S). Word Guess Cooldown: ${this.#wordCooldown} SECOND(S). Sub Only: ${subOnlyState}. Auto Start: ${autoPlayState}.`;
+        const autoPlayState = this.#autoPlay ? "ON" : "OFF";
+        const errorState = this.#error ? "ON" : "OFF";
+        return `Letter Guess Cooldown: ${this.#letterCooldown} second(s). Word Guess Cooldown: ${this.#wordCooldown} second(s). Sub Only: ${subOnlyState}. Auto Start: ${autoPlayState}. Error messages: ${errorState}.`;
     }
 }
 

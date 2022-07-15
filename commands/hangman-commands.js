@@ -97,16 +97,20 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
     let guessMessage = message.split(" ");
     if (!channelHangman.getStarted()) {
         // No Hangman game has started.
-        client.say(channel, `@${user["display-name"]} There is currently no Hangman game in progress.`);
+        if (channelSettings.getError())
+            client.say(channel, `@${user["display-name"]} There is currently no Hangman game in progress.`);
     } else if (channelSettings.getSubOnly() && !isSub(user)) {
         // Sub only mode is on and the user is not a sub.
-        client.say(channel, `@${user["display-name"]} Sorry, Hangman games are currently sub only.`);
+        if (channelSettings.getError())
+            client.say(channel, `@${user["display-name"]} Sorry, Hangman games are currently sub only.`);
     } else if ((guessMessage.length !== 2 || (guessMessage[1].length !== 1 && guessMessage[1].length !== channelHangman.getWordLength())) || !(/^[a-zA-Z]+$/.test(guessMessage[1]))) {
         // Invalid guess.
-        client.say(channel, `@${user["display-name"]} Invalid "!guess <letter/word>" usage. Possible reasons: Incorrect length, non-alphabetical characters.`);
+        if (channelSettings.getError())
+            client.say(channel, `@${user["display-name"]} Invalid "!guess <letter/word>" usage. Possible reasons: Incorrect length, non-alphabetical characters.`);
     } else if (channelHangman.isInGuessed(guessMessage[1].toUpperCase())) {
         // Already guessed.
-        client.say(channel, `@${user["display-name"]} "${guessMessage[1].toUpperCase()}" has been guessed. Lives: ${channelHangman.getLives()}. Guessed: ${channelHangman.getGuessed()}. Progress: ${channelHangman.getProgress()}.`);
+        if (channelSettings.getError())
+            client.say(channel, `@${user["display-name"]} "${guessMessage[1].toUpperCase()}" has been guessed. Lives: ${channelHangman.getLives()}. Guessed: ${channelHangman.getGuessed()}. Progress: ${channelHangman.getProgress()}.`);
     } else if (guessMessage[1].length === 1){
         // Letter
 
@@ -114,8 +118,10 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
         const userId = user["user-id"]
         const letterCooldownTime = channelHangman.getLetterCooldown(userId);
         if (letterCooldownTime > 0) {
-            const timeRemaining = Math.round((letterCooldownTime - Date.now())/1000);
-            client.say(channel, `@${user["display-name"]} You are on letter cooldown for ${timeRemaining} seconds!`);
+            if (channelSettings.getError()) {
+                const timeRemaining = Math.round((letterCooldownTime - Date.now())/1000);
+                client.say(channel, `@${user["display-name"]} You are on letter cooldown for ${timeRemaining} seconds!`);
+            }
             return;
         } else {
             channelHangman.setLetterCooldown(userId, Date.now() + (channelSettings.getLetterCooldown() * 1000));
@@ -160,8 +166,10 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
         const userId = user["user-id"]
         const wordCooldownTime = channelHangman.getWordCooldown(userId);
         if (wordCooldownTime > 0) {
-            const timeRemaining = Math.round((wordCooldownTime - Date.now())/1000);
-            client.say(channel, `@${user["display-name"]} You are on word cooldown for ${timeRemaining} seconds!`);
+            if (channelSettings.getError()) {
+                const timeRemaining = Math.round((wordCooldownTime - Date.now())/1000);
+                client.say(channel, `@${user["display-name"]} You are on word cooldown for ${timeRemaining} seconds!`);
+            }
             return;
         } else {
             channelHangman.setWordCooldown(userId, Date.now() + (channelSettings.getWordCooldown() * 1000));

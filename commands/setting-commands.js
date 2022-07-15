@@ -113,6 +113,37 @@ const settingAuto = ({ channel, client, user, channelSettings, message }) => {
     }
 }
 
+/** Check if error messages are displayed for failed Hangman guesses. */
+const isError = message =>  (message.startsWith(settingCommands.ERROR) && message.split(" ")[0] === settingCommands.ERROR);
+
+/**
+ * Set or get the current error message display
+ * @param {props} props All the props needed
+ */
+const settingError = ({ channel, client, user, channelSettings, message }) => {
+    const splitMessage = message.split(" ");
+    if(message === settingCommands.ERROR) {
+        const errorState = channelSettings.getError() ? "ON" : "OFF";
+        client.say(channel, `@${user["display-name"]} Error messages are turned ${errorState}. Use "!error <on/off>" to change.`);
+    } else if (splitMessage.length === 2 && splitMessage[1] === "off") {
+        if (channelSettings.setError(false)) {
+            client.say(channel, `@${user["display-name"]} Error messages are turned OFF.`);
+        } else {
+            client.say(channel, `@${user["display-name"]} Error messages are already turned OFF.`);
+        }
+    } else if (splitMessage.length === 2 && splitMessage[1] === "on") {
+        if (channelSettings.setError(true)) {
+            client.say(channel, `@${user["display-name"]} Error messages are turned ON.`);
+        } else {
+            client.say(channel, `@${user["display-name"]} Error messages are already turned ON.`);
+        }
+    }
+}
+
+/**
+ * Prints out all the settings.
+ * @param {props} props All the props needed
+ */
 const showSettings = ({ channel, client, user, channelSettings }) => {
     client.say(channel, `@${user["display-name"]} ${channelSettings.printSettings()}`);
 }
@@ -126,5 +157,7 @@ module.exports = {
     settingSubOnly,
     isAuto,
     settingAuto,
+    isError,
+    settingError,
     showSettings
 }

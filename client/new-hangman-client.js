@@ -8,7 +8,7 @@ const { hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
 const { isGuess, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats, hangmanCurrent, hangmanHelp } = require('../commands/hangman-commands');
 const { isAdmin } = require('../utils/users');
-const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, settingAuto, showSettings } = require('../commands/setting-commands');
+const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, settingAuto, showSettings, settingError, isError } = require('../commands/setting-commands');
 
 log4js.configure({
 	appenders: {
@@ -86,6 +86,7 @@ function createNewHangmanClient(id, name) {
 				[settingCommands.WORDCOOLDOWN]: () => settingWordCooldown({...adminProps, channelHangman, message }),
 				[settingCommands.SUBONLY]: () => settingSubOnly({ ...adminProps, message }),
 				[settingCommands.AUTO]: () => settingAuto({ ...adminProps, message }),
+				[settingCommands.ERROR]: () => settingError({ ...adminProps, message }),
 				[settingCommands.SETTINGS]: () => showSettings({ ...adminProps })
 			}
 
@@ -102,6 +103,9 @@ function createNewHangmanClient(id, name) {
 					break;
 				case (isAuto(message)):
 					settingCommand = `!auto`
+					break;
+				case (isError(message)):
+					settingCommand = `!error`
 					break;
 				default:
 					settingCommand = message;

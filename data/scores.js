@@ -42,10 +42,10 @@ class ChannelScores {
      * @param {Object} scoresJSON Saved and parsed scores JSON to set
      */
     setScoresJSON(scoresJSON) {
-        this.#id = scoresJSON.id;
-        this.#wins = scoresJSON.wins;
-        this.#total = scoresJSON.total;
-        this.#scoreboard = scoresJSON.scoreboard;
+        this.#id = scoresJSON.id ?? -1;
+        this.#wins = scoresJSON.wins ?? 0;
+        this.#total = scoresJSON.total ?? 0;
+        this.#scoreboard = scoresJSON.scoreboard ?? [];
     }
 
     /**
@@ -60,6 +60,9 @@ class ChannelScores {
                 const scoresJSON = fs.readFileSync(file, 'utf-8');
                 this.setScoresJSON(JSON.parse(scoresJSON));
             } catch {
+                console.log(`SCORES FILE READ ERROR ${this.#id}!`);
+            } finally {
+                // Save file in case some new parameters were added in an uldate.
                 fs.writeFile(file, JSON.stringify(this.getScoresJSON(), null, 4), (err) => {});
             }
         }
