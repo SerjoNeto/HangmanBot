@@ -4,7 +4,7 @@ const log4js = require('log4js');
 const { ChannelSettings } = require('../data/settings');
 const { ChannelScores } = require('../data/scores');
 const { ChannelHangman } = require('../data/hangman');
-const { hangmanBotOAuth } = require('../private/password');
+const { hangmanBotName, hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
 const { isGuess, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats, hangmanCurrent, hangmanHelp } = require('../commands/hangman-commands');
 const { isAdmin } = require('../utils/users');
@@ -56,7 +56,7 @@ function createNewHangmanClient(id, name) {
 	        reconnect: true,
 	    },
 	    identity: {
-	        username: 'PlayHangmanBot',
+	        username: hangmanBotName,
 	        password: hangmanBotOAuth,
 	    },
 	    channels: [name],
@@ -122,7 +122,7 @@ function createNewHangmanClient(id, name) {
 			[hangmanCommands.START]: () => hangmanStart({ ...hangmanProps, channelHangman }),
 			[hangmanCommands.END]: () => hangmanEnd({ ...hangmanProps, channelHangman }),
 			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelHangman, channelSettings, channelScores, message }),
-			[hangmanCommands.WINS]: () => hangmanWins({ ...hangmanProps, id, channelScores }),
+			[hangmanCommands.WINS]: () => hangmanWins({ ...hangmanProps, channelScores }),
 			[hangmanCommands.STATS]: () => hangmanStats({ ...hangmanProps, channelScores} ),
 			[hangmanCommands.LEADERBOARD]: () => hangmanLeaderboard({ ...hangmanProps, channelScores }),
 			[hangmanCommands.HANGMAN]: () => hangmanCurrent({ ...hangmanProps, channelHangman }),

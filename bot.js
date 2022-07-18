@@ -1,12 +1,11 @@
 const tmi = require('tmi.js');
-const { hangmanBotOAuth } = require('./private/password');
+const { hangmanBotName, hangmanBotOAuth } = require('./private/password');
 const { mainCommands } = require('./utils/commands');
 const { addHangmanClient, removeHangmanClient, transferHangmanClient, autoStartHangmanClient } = require('./commands/main-commands');
-const { loadNameIdData } = require('./data/name');
+const { loadNameIdData, nameIsEmpty } = require('./data/name');
 const { loadDictionary } = require('./data/dictionary');
 
 // Create Hangman client to PlayHangmanBot Channel
-const hangmanChannel = 'PlayHangmanBot';
 const options = {
     options: {
         debug: true,
@@ -16,23 +15,25 @@ const options = {
         reconnect: true,
     },
     identity: {
-        username: hangmanChannel,
+        username: hangmanBotName,
         password: hangmanBotOAuth,
     },
-    channels: [hangmanChannel],
+    channels: [hangmanBotName],
 };
 const client = new tmi.client(options);
 client.connect();
 
 // Load dictionary and channels who originally had Hangman running.
 client.on('connected', (address, port) => {
-    loadDictionary();
-    const nameList = loadNameIdData();
-    if (nameList !== null) {
-        autoStartHangmanClient(nameList);
-        client.action(hangmanChannel, `is live! Previously saved data loaded successfully!`);
-    } else {
-        client.action(hangmanChannel, `is live! Previously saved data failed to load.`);  
+    if (nameIsEmpty()) {
+        loadDictionary();
+        const nameList = loadNameIdData();
+        if (nameList !== null) {
+            autoStartHangmanClient(nameList);
+            client.action(hangmanBotName, `is live! Previously saved data loaded successfully!`);
+        } else {
+            client.action(hangmanBotName, `is live! Previously saved data failed to load.`);  
+        }
     }
 });
 

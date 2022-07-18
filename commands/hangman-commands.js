@@ -26,21 +26,6 @@ function startHangmanGame(channel, client, channelHangman) {
 }
 
 /**
- * Check to see if the game auto starts.
- * @param {Object} channel Channel to print game start.
- * @param {Object} client Twitch Bot client
- * @param {Object} channelHangman Channel Hangman data
- * @param {Object} channelSettings Class to call possible channel settings.
- */
-function autoStartHangman(channel, client, channelHangman, channelSettings) {
-    if (channelSettings.getAuto()) {
-        startHangmanGame(channel, client, channelHangman);
-    } else {
-        channelHangman.setStarted(false);
-    }
-}
-
-/**
  * Updates the Hangman score in this channel. 
  * @param {Object} channelScores Class for updating scores
  * @param {Boolean} isWin Increment win counter if win
@@ -137,10 +122,13 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
             // Correct guess.
             if(channelHangman.getWord() === channelHangman.getProgress()) {
                 // Winner, so upload stats and announce win.
+                channelHangman.setStarted(false);
                 updateScore(channelScores, true, user["display-name"], user["user-id"]);
                 const [win, place] = channelScores.getWinsAndPlaceById(userId);
                 client.say(channel, `@${user["display-name"]} You win! Word is "${channelHangman.getWord()}". You are now in ${ordinalSuffix(place)} place with ${win} wins!`);
-                autoStartHangman(channel, client, channelHangman, channelSettings);
+                if (channelSettings.getAuto()) {
+                    startHangmanGame(channel, client, channelHangman);
+                }
             } else {
                 //Correct, but more letters to be guessed.
                 client.say(channel, `@${user["display-name"]} ${times} "${charGuess}". Lives: ${channelHangman.getLives()}. Guessed: ${channelHangman.getGuessed()}. Progress: ${channelHangman.getProgress()}.`);
@@ -151,9 +139,12 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
             channelHangman.loseALive();
             if(channelHangman.getLives() === 0){
                 // Game over
+                channelHangman.setStarted(false);
                 updateScore(channelScores, false, user["display-name"], user["user-id"]);
                 client.say(channel, `@${user["display-name"]} GAME OVER. No "${charGuess}". Guessed: ${channelHangman.getGuessed()}. Final progress: ${channelHangman.getProgress()}. Actual Word: "${channelHangman.getWord()}".`);
-                autoStartHangman(channel, client, channelHangman, channelSettings);
+                if (channelSettings.getAuto()) {
+                    startHangmanGame(channel, client, channelHangman);
+                }
             } else {
                 // Incorrect, but there are still lives remaining.
                 client.say(channel, `@${user["display-name"]} No "${charGuess}". Lives: ${channelHangman.getLives()}. Guessed: ${channelHangman.getGuessed()}. Progress: ${channelHangman.getProgress()}.`);
@@ -179,17 +170,23 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
         channelHangman.addGuessed(wordGuess);
 
         if(wordGuess === channelHangman.getWord()) {
+            channelHangman.setStarted(false);
             updateScore(channelScores, true, user["display-name"], user["user-id"]);
             const [win, place] = channelScores.getWinsAndPlaceById(userId);
             client.say(channel, `@${user["display-name"]} You win! Word is "${channelHangman.getWord()}". You are now in ${ordinalSuffix(place)} place with ${win} wins!`);
-            autoStartHangman(channel, client, channelHangman, channelSettings);
+            if (channelSettings.getAuto()) {
+                startHangmanGame(channel, client, channelHangman);
+            }
         } else {
             channelHangman.loseALive();
             if(channelHangman.getLives() === 0){
                 // Game over
+                channelHangman.setStarted(false);
                 updateScore(channelScores, false, user["display-name"], user["user-id"]);
                 client.say(channel, `@${user["display-name"]} GAME OVER. The word is not "${wordGuess}". Guessed: ${channelHangman.getGuessed()}. Final progress: ${channelHangman.getProgress()}. Actual Word: "${channelHangman.getWord()}".`);
-                autoStartHangman(channel, client, channelHangman, channelSettings);
+                if (channelSettings.getAuto()) {
+                    startHangmanGame(channel, client, channelHangman);
+                }
             } else {
                 // Incorrect, but there are still lives remaining.
                 client.say(channel, `@${user["display-name"]} The word is not "${wordGuess}". Lives: ${channelHangman.getLives()}. Guessed: ${channelHangman.getGuessed()}. Progress: ${channelHangman.getProgress()}.`);
@@ -205,10 +202,11 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
  * Command: !wins
  * Returns the number of wins a user has and their place on their keyboard.
  */
-const hangmanWins = ({ channel, client, user, id, channelScores }) => {
-    const [win, place] = channelScores.getWinsAndPlaceById(id);
+const hangmanWins = ({ channel, client, user, channelScores }) => {
+    const userId = user["user-id"]
+    const [win, place] = channelScores.getWinsAndPlaceById(userId);
     if (win === 0) {
-        client.say(channel, `@${user["display-name"]} You are have 0 wins!`);
+        client.say(channel, `@${user["display-name"]} You have 0 wins!`);
     } else {
         client.say(channel, `@${user["display-name"]} You are in ${ordinalSuffix(place)} place with ${win} wins!`);
     }
