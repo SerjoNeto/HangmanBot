@@ -60,11 +60,21 @@ function saveNameIdData() {
 	fs.writeFile(dataPath, JSON.stringify(nameId, null, 4), (err) => {});
 }
 
+/**
+ * Checks if current nameId is empty. 
+ * Used because sometimes Twitch forces the bot to reconnect and this is used so new clients aren't created again.
+ * @returns {Boolean} Checks if current nameId is empty.
+ */
+function nameIsEmpty() {
+	return Object.entries(nameId).length === 0;
+}
+
 module.exports = {
 	hasId,
 	getName,
 	addName,
 	deleteName,
 	transferName,
-	loadNameIdData
+	loadNameIdData,
+	nameIsEmpty
 }
