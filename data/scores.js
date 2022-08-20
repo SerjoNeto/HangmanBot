@@ -71,8 +71,8 @@ class ChannelScores {
     /**
      * Saves the current scores
      */
-    saveScores() {
-        const file = `./logs/${this.#id}/scores.json`
+    saveScores(scores = 'scores.json') {
+        const file = `./logs/${this.#id}/${scores}`;
         fs.writeFile(file, JSON.stringify(this.getScoresJSON(), null, 4), (err) => {});
     }
 
@@ -169,6 +169,16 @@ class ChannelScores {
      */
     getChannelWins() {
         return [(this.#wins), (this.#total)];
+    }
+
+    /**
+     * Reset the scores (wins/total games/leaderboard)
+     */
+    resetScores() {
+        this.#wins = 0;
+        this.#total = 0;
+        this.#scoreboard.length = 0;
+        this.saveScores();
     }
 }
 

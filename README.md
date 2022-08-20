@@ -108,6 +108,7 @@ The following commands are used on your stream for Hangman.
 - **!auto**- Command for auto start Hangman games. If this is turned on, a new Hangman game will automatically start once the previous game is finished, instead of having to type `!start` every time. Use `!auto` to see the current auto play state, and use `!auto on` to turn on auto play mode, or `!auto off` to turn off auto play mode. Please note that if you turn on auto while there are no Hangman games in progress, Hangman games will not automatically start. You will still need to use `!start` to start the first game!
 - **!error**- Command for whether or not to show error messages for Hangman guesses. If this is turned on, the user will be informed the reason why their guess was invalid. Otherwise, the bot will not tell why a guess failed to save space. Use `!error` to see the current error message display state, and use `!error on` to turn on error messages, or `!error off` to turn off error message displays. 
 - **!settings**- Command to check the current Hangman Bot settings for letter/word cooldown, sub only state and auto play state.
+- **!resetscores**- Command to reset the Hangman leaderboard. Please note that all your previous scores will be overridden and cannot be recovered, so think before you reset!
 
 **Commands for Everybody**
 
