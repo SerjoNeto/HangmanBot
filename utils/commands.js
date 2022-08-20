@@ -25,6 +25,7 @@ exports.settingCommands = {
 	WORDCOOLDOWN: `!word`,
 	SUBONLY: `!subonly`,
 	AUTO: `!auto`,
+	AUTOTIMER: `!autotimer`,
 	ERROR: `!error`,
 	SETTINGS: `!settings`
 }

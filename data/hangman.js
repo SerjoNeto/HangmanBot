@@ -14,6 +14,8 @@ class ChannelHangman {
     #word;
     /* Current progress of Hangman word guess. In char array for faster complexity. */
     #progress;
+    /* Auto play timer ID. Used to cancel if someone starts during the timer phase. */
+    #timeoutID;
 
     /**
      * Constructor for creating a new ChannelHangman class
@@ -26,6 +28,7 @@ class ChannelHangman {
         this.#guessed = [];
         this.#word = [];
         this.#progress = [];
+        this.#timeoutID = null;
     }
 
     /**
@@ -212,6 +215,29 @@ class ChannelHangman {
             }
         }
         return times;
+    }
+
+    /**
+     * Gets current timeout ID
+     * @returns timeout ID
+     */
+    getTimeoutID() {
+        return this.#timeoutID;
+    }
+
+    /**
+     * Sets current timeout ID
+     * @param {integer} id timeout ID 
+     */
+    setTimeoutID(id) {
+        this.#timeoutID = id;
+    }
+
+    /**
+     * Resets current timeout ID
+     */
+    resetTimeoutID() {
+        this.#timeoutID = null
     }
 
 }
