@@ -29,7 +29,7 @@ class ChannelSettings {
         this.#wordCooldown = 60
         this.#subOnly = false
         this.#autoPlay = false
-        this.#autoPlayTimer = 30
+        this.#autoPlayTimer = 15
         this.#error = true
     }
 
@@ -60,7 +60,7 @@ class ChannelSettings {
         this.#wordCooldown = settingJSON.wordCooldown ?? 60;
         this.#subOnly = settingJSON.subOnly ?? false;
         this.#autoPlay = settingJSON.autoPlay ?? false;
-        this.#autoPlayTimer = settingJSON.autoPlayTimer ?? 30;
+        this.#autoPlayTimer = settingJSON.autoPlayTimer ?? 15;
         this.#error = settingJSON.error ?? true;
     }
 

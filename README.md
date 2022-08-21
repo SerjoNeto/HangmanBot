@@ -75,7 +75,7 @@ There are settings that can be changed currently. To check all the current setti
 2. **Word Guess Cooldown** - 60 seconds
 3. **Sub Only Games** - Off
 4. **Auto Start Games** - Off
-5. **Auto Start Timer** - 30 seconds
+5. **Auto Start Timer** - 15 seconds
 6. **Error Message** - On
 
 ### Check The Leaderboards

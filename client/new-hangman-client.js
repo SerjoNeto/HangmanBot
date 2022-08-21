@@ -126,15 +126,15 @@ function createNewHangmanClient(id, name) {
 		// Commands for everybody
 		const hangmanProps = { channel, client, user };
 		const chatCommands = {
-			[hangmanCommands.START]: () => hangmanStart({ ...hangmanProps, channelHangman }),
+			[hangmanCommands.START]: () => hangmanStart({ ...hangmanProps, channelHangman, logger }),
 			[hangmanCommands.END]: () => hangmanEnd({ ...hangmanProps, channelHangman }),
-			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelHangman, channelSettings, channelScores, message }),
+			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelHangman, channelSettings, channelScores, message, logger }),
 			[hangmanCommands.WINS]: () => hangmanWins({ ...hangmanProps, channelScores }),
 			[hangmanCommands.STATS]: () => hangmanStats({ ...hangmanProps, channelScores} ),
 			[hangmanCommands.LEADERBOARD]: () => hangmanLeaderboard({ ...hangmanProps, channelScores }),
 			[hangmanCommands.HANGMAN]: () => hangmanCurrent({ ...hangmanProps, channelHangman }),
 			[hangmanCommands.HELP]: () => hangmanHelp(hangmanProps),
-			[hangmanCommands.RESETSCORES]: () => hangmanResetScores({ ...hangmanProps, channelScores, message })
+			[hangmanCommands.RESETSCORES]: () => hangmanResetScores({ ...hangmanProps, channelScores, message, logger })
 		}
 
 		let command;
