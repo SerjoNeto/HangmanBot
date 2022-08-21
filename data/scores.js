@@ -9,18 +9,32 @@ class ChannelScores {
     #wins;
     #total;
     #scoreboard;
+    #currentstreak;
+    #beststreak;
 
     /**
      * Constructor for a ChannelScores class.
      * @param {integer} wins Number of successful Hangman guesses.
      * @param {integer} total Number of total Hangman games played.
      * @param {list} scoreboard Scores of everybody playing.
+     * @param {object} currentstreak Current win streak.
+     * @param {object} beststreak Best win streak.
      */
     constructor(userID) {
         this.#id = userID
         this.#wins = 0
         this.#total = 0
         this.#scoreboard = []
+        this.#currentstreak = {
+            id: null,
+            user: null,
+            streak: 0
+        }
+        this.#beststreak = {
+            id: null,
+            user: null,
+            streak: 0
+        }
     }
 
     /**
@@ -32,8 +46,10 @@ class ChannelScores {
             id: this.#id,
             wins: this.#wins,
             total: this.#total,
-            scoreboard: this.#scoreboard
-        }
+            scoreboard: this.#scoreboard,
+            currentstreak: this.#currentstreak,
+            beststreak: this.#beststreak
+        };
         return scoreInJSON;
     }
 
@@ -46,6 +62,16 @@ class ChannelScores {
         this.#wins = scoresJSON.wins ?? 0;
         this.#total = scoresJSON.total ?? 0;
         this.#scoreboard = scoresJSON.scoreboard ?? [];
+        this.#currentstreak = scoresJSON.currentstreak ?? {
+            id: null,
+            user: null,
+            streak: 0
+        }
+        this.#beststreak = scoresJSON.beststreak ?? {
+            id: null,
+            user: null,
+            streak: 0
+        }
     }
 
     /**
@@ -91,6 +117,7 @@ class ChannelScores {
         this.#wins++;
         this.#total++;
         this.addToScoreBoard(name, id);
+        this.updateWinStreak(name, id);
         this.saveScores();
     }
 
@@ -178,7 +205,64 @@ class ChannelScores {
         this.#wins = 0;
         this.#total = 0;
         this.#scoreboard.length = 0;
+        this.#currentstreak = {
+            id: null,
+            user: null,
+            streak: 0
+        };
+        this.#beststreak = {
+            id: null,
+            user: null,
+            streak: 0
+        };
         this.saveScores();
+    }
+
+    /**
+     * Updates the win streak Returns current streak.
+     */
+    updateWinStreak(user, id) {
+        // Update current win streak.
+        if (this.#currentstreak.id === id) {
+            // Update Twitch name if changed.
+            if (this.#currentstreak.user !== user) {
+                this.#currentstreak.user = user;
+            }
+            this.#currentstreak.streak++;
+        } else {
+            this.#currentstreak.streak = 1;
+            this.#currentstreak.id = id;
+            this.#currentstreak.user= user;
+        }
+
+        // Update best win streak if needed
+        if (this.#beststreak.id === id && this.#beststreak.user !== user) {
+            this.#beststreak.user = user;
+        }
+        if (this.#currentstreak.streak > this.#beststreak.streak) {
+            this.#beststreak.id = id;
+            this.#beststreak.user = user;
+            this.#beststreak.streak = this.#currentstreak.streak;
+        }
+    }
+
+    /**
+     * Get the current and best win streak and users.
+     */
+    getWinStreaks() {
+        return {
+            currentStreak: this.#currentstreak.streak,
+            currentUser : this.#currentstreak.user,
+            bestStreak: this.#beststreak.streak,
+            bestUser: this.#beststreak.user
+        }
+    }
+
+    /**
+     * Get the current win streak.
+     */
+    getCurrentStreak() {
+        return this.#currentstreak.streak;
     }
 }
 

@@ -67,7 +67,7 @@ There are settings that can be changed currently. To check all the current setti
 3. **Sub Only Games**- If you only want your Twitch subscribers to play Hangman (all tiers), you can change your Hangman games to sub only mode. Use `!subonly` to see the current sub only status. Turn on sub only games with `!subonly on` and turn off with `!subonly off`.
 4. **Auto Start Games**- If you are tired of typing `!start` every time a Hangman games end in chat to start a new one, you can set the bot to automatically start a new Hangman game immediately after the previous one ended. Use `!auto` to check the current auto start status. Turn on auto start games with `!auto on` and turn off with `!auto off`.
 5. **Auto Start Timer** - If you feel like auto start does not transition well enough immediately, and causes concerns because some people can accidentally guess incorrectly in an already finished game, you can set a time between the last game and next game is automatically start so thsi does not happen. Use `!autotimer <second between 0-3600>` to change. 
-5. **Error Messages**- If you are tired of people spamming Hangman guesses and the bot telling the user why their guess is invalid (still on cooldown, already guessed letter, word length not right, etc.), you can turn this off with `!error off` and on with `!error on`, and check the current state of error message display with `!error`.
+6. **Error Messages**- If you are tired of people spamming Hangman guesses and the bot telling the user why their guess is invalid (still on cooldown, already guessed letter, word length not right, etc.), you can turn this off with `!error off` and on with `!error on`, and check the current state of error message display with `!error`.
 
 **Default Settings:**
 
@@ -109,9 +109,9 @@ The following commands are used on your stream for Hangman.
 - **!subonly**- Command for sub only Hangman games. If this is turned on, only subscribers can play Hangman through guesses. Use `!subonly` to see the current sub only state, and use `!subonly on` to turn on sub only mode, or `!subonly off` to turn off sub only mode.
 - **!auto**- Command for auto start Hangman games. If this is turned on, a new Hangman game will automatically start once the previous game is finished, instead of having to type `!start` every time. Use `!auto` to see the current auto play state, and use `!auto on` to turn on auto play mode, or `!auto off` to turn off auto play mode. Please note that if you turn on auto while there are no Hangman games in progress, Hangman games will not automatically start. You will still need to use `!start` to start the first game!
 - **!autotimer**- Command for auto start timers. If you have auto start Hangman games on, sometimes you want a little time before the next one automatically starts. You can set that time in seconds here. Use `!autotimer` to check the current auto play timer. Use `!autotimer <number between 0-3600>` like `!autotimer 30' to set the time in seconds. 
+- **!resetscores**- Command to reset the Hangman leaderboard. Please note that all your previous scores will be overridden and cannot be recovered, so think before you reset!
 - **!error**- Command for whether or not to show error messages for Hangman guesses. If this is turned on, the user will be informed the reason why their guess was invalid. Otherwise, the bot will not tell why a guess failed to save space. Use `!error` to see the current error message display state, and use `!error on` to turn on error messages, or `!error off` to turn off error message displays. 
 - **!settings**- Command to check the current Hangman Bot settings for letter/word cooldown, sub only state and auto play state.
-- **!resetscores**- Command to reset the Hangman leaderboard. Please note that all your previous scores will be overridden and cannot be recovered, so think before you reset!
 
 **Commands for Everybody**
 
@@ -120,11 +120,19 @@ The following commands are used on your stream for Hangman.
 - **!stats**- Check how many Hangman games total has been played on the channel and how many of those games are wins.
 - **!leaderboard**- Check to see the top 10 players of Hangman on the channel.
 - **!hangman**- Check the current status of Hangman on the channel.
+- **!streak**- Gives the current and best win streak for Hangman.
 - **!help**- Gives a link to this GitHub repository for anybody who needs help.
 
 ## Versions
 
-- **1.0.0** : First Release. 
+**1.0.0** : First Release. 
+
+**1.1.0** : Minor Quality of Life Fixes.
+- Change to new and better dictionary without names.
+- Added win streaks.
+- Added a way to reset Hangman scores with `!resetscores`.
+- Added a changeable timer between Hangman games if auto start is on with `!autotimer`.
+- Minor text edits.
 
 ## FAQs
 

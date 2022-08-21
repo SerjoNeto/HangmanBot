@@ -141,7 +141,8 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
                 channelHangman.setStarted(false);
                 updateScore(channelScores, true, user["display-name"], user["user-id"]);
                 const [win, place] = channelScores.getWinsAndPlaceById(userId);
-                client.say(channel, `@${user["display-name"]} PogChamp CONGRATS! The word is "${channelHangman.getWord()}". You are now in ${ordinalSuffix(place)} place with ${win} wins! PogChamp`);
+                const winStreak = channelScores.getCurrentStreak();
+                client.say(channel, `@${user["display-name"]} PogChamp CONGRATS! ${winStreak} WIN STREAK! The word is "${channelHangman.getWord()}". You are now in ${ordinalSuffix(place)} place with ${win} wins! PogChamp`);
                 startHangmanGameDelay(channel, client, channelHangman, channelSettings, logger);
             } else {
                 //Correct, but more letters to be guessed.
@@ -185,7 +186,8 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
             channelHangman.setStarted(false);
             updateScore(channelScores, true, user["display-name"], user["user-id"]);
             const [win, place] = channelScores.getWinsAndPlaceById(userId);
-            client.say(channel, `@${user["display-name"]} PogChamp CONGRATS! The word is "${channelHangman.getWord()}". You are now in ${ordinalSuffix(place)} place with ${win} wins! PogChamp`);
+            const winStreak = channelScores.getCurrentStreak();
+            client.say(channel, `@${user["display-name"]} PogChamp CONGRATS! ${winStreak} WIN STREAK! The word is "${channelHangman.getWord()}". You are now in ${ordinalSuffix(place)} place with ${win} wins! PogChamp`);
             startHangmanGameDelay(channel, client, channelHangman, channelSettings, logger);
         } else {
             channelHangman.loseALive();
@@ -277,11 +279,20 @@ const hangmanResetScores = ({ channel, client, user, channelScores, message, log
             client.say(channel, `@${user["display-name"]} To reset scores, please type everthing in between the quotes: "${hangmanCommands.RESETSCORESFULL}"`);
         } else if (message === hangmanCommands.RESETSCORESFULL) {
             logger.debug(`${user["display-name"]} SCOREBOARD BEFORE RESET: ${JSON.stringify(channelScores.getScoresJSON())}`);
-            channelScores.resetScores(logger)
+            channelScores.resetScores(logger);
             client.say(channel, `@${user["display-name"]} Hangman scores are reset.`);
         }
     }
 };
+
+const hangmanStreaks = ({channel, client, user, channelScores }) => {
+    const streaks = channelScores.getWinStreaks();
+    if (streaks["currentStreak"] === 0 || streaks["bestStreak"] === 0) {
+        client.say(channel, `@${user["display-name"]} There is currently no Hangman win streak.`);
+    } else {
+        client.say(channel, `@${user["display-name"]} CURRENT STREAK: ${streaks["currentStreak"]} win(s) by ${streaks["currentUser"]}. BEST STREAK: ${streaks["bestStreak"]} win(s) by ${streaks["bestUser"]}.`);
+    }
+}
 
 module.exports = {
     isGuess,
@@ -294,5 +305,6 @@ module.exports = {
     hangmanCurrent,
     hangmanHelp,
     isHangmanResetScores,
-    hangmanResetScores
+    hangmanResetScores,
+    hangmanStreaks
 };
