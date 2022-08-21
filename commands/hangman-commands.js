@@ -287,8 +287,10 @@ const hangmanResetScores = ({ channel, client, user, channelScores, message, log
 
 const hangmanStreaks = ({channel, client, user, channelScores }) => {
     const streaks = channelScores.getWinStreaks();
-    if (streaks["currentStreak"] === 0 || streaks["bestStreak"] === 0) {
-        client.say(channel, `@${user["display-name"]} There is currently no Hangman win streak.`);
+    if (streaks["currentStreak"] === 0 && streaks["bestStreak"] === 0) {
+        client.say(channel, `@${user["display-name"]} CURRENT STREAK: None. BEST STREAK: None.`);
+    } else if (streaks["currentStreak"] === 0 && streaks["bestStreak"] !== 0) {
+        client.say(channel, `@${user["display-name"]} CURRENT STREAK: None. BEST STREAK: ${streaks["bestStreak"]} win(s) by ${streaks["bestUser"]}.`);
     } else {
         client.say(channel, `@${user["display-name"]} CURRENT STREAK: ${streaks["currentStreak"]} win(s) by ${streaks["currentUser"]}. BEST STREAK: ${streaks["bestStreak"]} win(s) by ${streaks["bestUser"]}.`);
     }

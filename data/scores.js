@@ -134,6 +134,7 @@ class ChannelScores {
      */
     addTotal() {
         this.#total++;
+        this.resetCurrentStreak();
         this.saveScores();
     }
 
@@ -263,6 +264,12 @@ class ChannelScores {
      */
     getCurrentStreak() {
         return this.#currentstreak.streak;
+    }
+
+    resetCurrentStreak() {
+        this.#currentstreak.streak = 0;
+        this.#currentstreak.id = null;
+        this.#currentstreak.user = null;
     }
 }
 
