@@ -14,7 +14,10 @@ exports.hangmanCommands = {
 	STATS: '!stats',
 	LEADERBOARD: '!leaderboard',
 	HELP: '!help',
-	HANGMAN: '!hangman'
+	HANGMAN: '!hangman',
+	RESETSCORES: '!resetscores',
+	RESETSCORESFULL: '!resetscores Yes I understand any deleted scores cannot be recovered.',
+	STREAK: `!streak`
 }
 
 /** List of valid Hangman setting commands. */
@@ -23,6 +26,7 @@ exports.settingCommands = {
 	WORDCOOLDOWN: `!word`,
 	SUBONLY: `!subonly`,
 	AUTO: `!auto`,
+	AUTOTIMER: `!autotimer`,
 	ERROR: `!error`,
 	SETTINGS: `!settings`
 }

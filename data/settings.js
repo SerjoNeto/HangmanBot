@@ -10,6 +10,7 @@ class ChannelSettings {
     #wordCooldown;
     #subOnly;
     #autoPlay;
+    #autoPlayTimer;
     #error;
 
     /**
@@ -19,6 +20,7 @@ class ChannelSettings {
      * @param {integer} wordCooldown Time before user is allowed another word guess.
      * @param {boolean} subOnly Only allow subscribers to play.
      * @param {boolean} autoPlay Automatically start another Hangman game when one ends.
+     * @param {integer} autoPlayTimer How long before a Hangman game starts automatically after one ends.
      * @param {boolean} error Show error messages for Hangman in chat.
      */
     constructor(userId) {
@@ -27,6 +29,7 @@ class ChannelSettings {
         this.#wordCooldown = 60
         this.#subOnly = false
         this.#autoPlay = false
+        this.#autoPlayTimer = 15
         this.#error = true
     }
 
@@ -41,6 +44,7 @@ class ChannelSettings {
             wordCooldown: this.#wordCooldown,
             subOnly: this.#subOnly,
             autoPlay: this.#autoPlay,
+            autoPlayTimer: this.#autoPlayTimer,
             error: this.#error
         }
         return settingInJSON;
@@ -56,6 +60,7 @@ class ChannelSettings {
         this.#wordCooldown = settingJSON.wordCooldown ?? 60;
         this.#subOnly = settingJSON.subOnly ?? false;
         this.#autoPlay = settingJSON.autoPlay ?? false;
+        this.#autoPlayTimer = settingJSON.autoPlayTimer ?? 15;
         this.#error = settingJSON.error ?? true;
     }
 
@@ -177,6 +182,28 @@ class ChannelSettings {
     }
 
     /**
+     * Returns current auto play timer.
+     */
+    getAutoPlayTimer() {
+        return this.#autoPlayTimer;
+    }
+
+    /**
+     * Sets a new auto play timer. Only allowed between 0-3600 seconds.
+     * @param {int} second Time in seconds of new auto play timer
+     * @returns If new auto play timer was successfully set
+     */
+    setAutoPlayTimer(second) {
+        if (second < 0 || second > 3600 || this.#autoPlayTimer === second) {
+            return false;
+        } else {
+            this.#autoPlayTimer = second;
+            this.saveSettings();
+            return true;
+        }
+    }
+
+    /**
      * Returns current error message display state.
      * @returns If error messages for Hangman are shown in chat
      */
@@ -207,7 +234,7 @@ class ChannelSettings {
         const subOnlyState = this.#subOnly ? "ON" : "OFF";
         const autoPlayState = this.#autoPlay ? "ON" : "OFF";
         const errorState = this.#error ? "ON" : "OFF";
-        return `Letter Guess Cooldown: ${this.#letterCooldown} second(s). Word Guess Cooldown: ${this.#wordCooldown} second(s). Sub Only: ${subOnlyState}. Auto Start: ${autoPlayState}. Error messages: ${errorState}.`;
+        return `Letter Guess Cooldown: ${this.#letterCooldown} second(s). Word Guess Cooldown: ${this.#wordCooldown} second(s). Sub Only: ${subOnlyState}. Auto Start: ${autoPlayState}. Auto Start Timer: ${this.#autoPlayTimer} second(s). Error messages: ${errorState}.`;
     }
 }
 

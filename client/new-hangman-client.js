@@ -6,9 +6,9 @@ const { ChannelScores } = require('../data/scores');
 const { ChannelHangman } = require('../data/hangman');
 const { hangmanBotName, hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
-const { isGuess, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats, hangmanCurrent, hangmanHelp } = require('../commands/hangman-commands');
+const { isGuess, isHangmanResetScores, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats, hangmanCurrent, hangmanHelp, hangmanResetScores, hangmanStreaks } = require('../commands/hangman-commands');
 const { isAdmin } = require('../utils/users');
-const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, settingAuto, showSettings, settingError, isError } = require('../commands/setting-commands');
+const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, isAutoPlayTimer, settingAuto, showSettings, settingError, isError, settingAutoPlayTimer } = require('../commands/setting-commands');
 
 log4js.configure({
 	appenders: {
@@ -72,10 +72,12 @@ function createNewHangmanClient(id, name) {
 	// Listener for Hangman messages. 
 	newHangmanClient.on('message', (channel, user, message, self) => {
 		// Ignore self messages and non-commands while logging self messages.
-		if(!self && !message.startsWith("!")) return;
-		logger.debug(`${user["display-name"]}: ${message}`);
-		if(self) return;
-
+		if(self) {
+			logger.debug(`${user["display-name"]}: ${message}`);
+			return;
+		}
+		if(!message.startsWith("!")) return;
+		
 		const client = newHangmanClient;
 
 		// Admin commands only. Mostly just settings.
@@ -86,6 +88,7 @@ function createNewHangmanClient(id, name) {
 				[settingCommands.WORDCOOLDOWN]: () => settingWordCooldown({...adminProps, channelHangman, message }),
 				[settingCommands.SUBONLY]: () => settingSubOnly({ ...adminProps, message }),
 				[settingCommands.AUTO]: () => settingAuto({ ...adminProps, message }),
+				[settingCommands.AUTOTIMER]: () => settingAutoPlayTimer({...adminProps, message }),
 				[settingCommands.ERROR]: () => settingError({ ...adminProps, message }),
 				[settingCommands.SETTINGS]: () => showSettings({ ...adminProps })
 			}
@@ -104,6 +107,9 @@ function createNewHangmanClient(id, name) {
 				case (isAuto(message)):
 					settingCommand = `!auto`
 					break;
+				case (isAutoPlayTimer(message)):
+					settingCommand = `!autotimer`
+					break;
 				case (isError(message)):
 					settingCommand = `!error`
 					break;
@@ -112,6 +118,7 @@ function createNewHangmanClient(id, name) {
 					break;
 			}
 			if(adminCommands[settingCommand]) {
+				logger.debug(`${user["display-name"]}: ${message}`);
 				adminCommands[settingCommand]();
 			}
 		}
@@ -119,14 +126,16 @@ function createNewHangmanClient(id, name) {
 		// Commands for everybody
 		const hangmanProps = { channel, client, user };
 		const chatCommands = {
-			[hangmanCommands.START]: () => hangmanStart({ ...hangmanProps, channelHangman }),
+			[hangmanCommands.START]: () => hangmanStart({ ...hangmanProps, channelHangman, logger }),
 			[hangmanCommands.END]: () => hangmanEnd({ ...hangmanProps, channelHangman }),
-			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelHangman, channelSettings, channelScores, message }),
+			[hangmanCommands.GUESS]: () => hangmanGuess({ ...hangmanProps, channelHangman, channelSettings, channelScores, message, logger }),
 			[hangmanCommands.WINS]: () => hangmanWins({ ...hangmanProps, channelScores }),
 			[hangmanCommands.STATS]: () => hangmanStats({ ...hangmanProps, channelScores} ),
 			[hangmanCommands.LEADERBOARD]: () => hangmanLeaderboard({ ...hangmanProps, channelScores }),
 			[hangmanCommands.HANGMAN]: () => hangmanCurrent({ ...hangmanProps, channelHangman }),
-			[hangmanCommands.HELP]: () => hangmanHelp(hangmanProps)
+			[hangmanCommands.HELP]: () => hangmanHelp(hangmanProps),
+			[hangmanCommands.RESETSCORES]: () => hangmanResetScores({ ...hangmanProps, channelScores, message, logger }),
+			[hangmanCommands.STREAK]: () => hangmanStreaks({ ...hangmanProps, channelScores })
 		}
 
 		let command;
@@ -134,11 +143,15 @@ function createNewHangmanClient(id, name) {
 			case (isGuess(message)):
 				command = '!guess';
 				break;
+			case (isHangmanResetScores(message)):
+				command = '!resetscores';
+				break;
 			default:
 				command = message;
 				break;
 		}
 		if(chatCommands[command]) {
+			logger.debug(`${user["display-name"]}: ${message}`);
 			chatCommands[command]();
 		}
 	});

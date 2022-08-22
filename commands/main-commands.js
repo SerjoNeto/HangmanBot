@@ -26,7 +26,7 @@ const addHangmanClient = ({ client, channel, name, id }) => {
 	addName(id, name);
 	const hangmanClient = createNewHangmanClient(id, name);
 	liveHangmanClients[id] = hangmanClient;
-	client.say(channel, `Congrats @${name}, the Hangman Bot has been successfully added to your channel!`);
+	client.say(channel, `Congrats @${name}, the Hangman Bot has been successfully added to your channel! Rememeber to mod this bot on your channel! Also, please note there is no phone number tied to this bot, so if you have a 2FA phone number requirement in your chat, you may need to remove it first for this bot to work.`);
 };
 
 // Removes live Hangman Game from channel [name].

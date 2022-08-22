@@ -9,7 +9,7 @@ const { settingCommands } = require("../utils/commands");
  */
 function canChangeSettings(client, channel, user, channelHangman) {
     if(channelHangman.getStarted()) {
-        client.say(channel, `@${user["display-name"]} This setting cannot be changed during a Hangman game! Type '!end' then try again.`);
+        client.say(channel, `@${user["display-name"]} This setting cannot be changed during a Hangman game! End the game with '!end' then try again.`);
         return true;
     }
     return false;
@@ -55,6 +55,27 @@ const settingWordCooldown = ({ channel, client, user, channelSettings, channelHa
             client.say(channel, `@${user["display-name"]} The new word guess cooldown is now ${channelSettings.getWordCooldown()} seconds.`);
         } else {
             client.say(channel, `@${user["display-name"]} Invalid "!word <number between 0-3600>" usage.`);
+        }
+    }
+}
+
+/** Check if a message is to change the auto play timer cooldown */
+const isAutoPlayTimer = message => (message.startsWith(settingCommands.AUTOTIMER) && message.split(" ")[0] === settingCommands.AUTOTIMER);
+
+/**
+ * Set or get the current auto play timer.
+ * @param {props} props All the props needed
+ */
+ const settingAutoPlayTimer = ({ channel, client, user, channelSettings, message }) => {
+    const splitMessage = message.split(" ");
+    if (message === settingCommands.AUTOTIMER) {
+        client.say(channel, `@${user["display-name"]} The current auto-play start timer is ${channelSettings.getAutoPlayTimer()} seconds. Use "${settingCommands.AUTOTIMER} <number between 0-3600>" to change.`);
+    } else if (splitMessage.length === 2) {
+        const second = parseInt(splitMessage[1]);
+        if (!isNaN(second) && channelSettings.setAutoPlayTimer(second)) {
+            client.say(channel, `@${user["display-name"]} The new auto-play start timer is now ${channelSettings.getAutoPlayTimer()} seconds. This change will take effect at the end of the current/next game.`);
+        } else {
+            client.say(channel, `@${user["display-name"]} Invalid ${settingCommands.AUTOTIMER} "<number between 0-3600>" usage.`);
         }
     }
 }
@@ -157,6 +178,8 @@ module.exports = {
     settingSubOnly,
     isAuto,
     settingAuto,
+    isAutoPlayTimer,
+    settingAutoPlayTimer,
     isError,
     settingError,
     showSettings
