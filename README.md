@@ -141,6 +141,10 @@ The following commands are used on your stream for Hangman.
 **1.2.0** : Added a Custom Win Message.
 - Add a custom win message to Hangman with `!winmessage`. 
 
+**1.2.1** : Bug fixes.
+- Fixed a problem where Hangman won't connect to the channel when all of them connect at once.
+- Removed name replace all in custom message because I'm too lazy to learn regex for lower versions of Node.
+
 ## FAQs
 
 **Question: I changed my Twitch username and Hangman isn't working anymore.**

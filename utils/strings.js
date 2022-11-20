@@ -4,7 +4,7 @@
  * @param {String} winMessage Win message to parse and change
  */
 function winMessageBuilder(winner, winMessage) {
-    return winMessage.replaceAll('$user', winner);
+    return winMessage.replace('$user', winner);
 }
 
 module.exports = {

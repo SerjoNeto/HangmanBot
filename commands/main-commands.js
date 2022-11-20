@@ -61,13 +61,16 @@ const transferHangmanClient = ({ client, channel, name, id }) => {
 	}
 };
 
-// Automatically starts Hangman games for nameId
+// Automatically starts Hangman games for nameId. Added a 3000 second between each start to make sure not to overload the server.
 function autoStartHangmanClient(nameId) {
-	for (const [id, name] of Object.entries(nameId)) {
-		const hangmanClient = createNewHangmanClient(id, name);
-		liveHangmanClients[id] = hangmanClient;
+	for (const [index, [id, name]] of Object.entries(nameId).entries()) {
+		setTimeout(() => {
+			const hangmanClient = createNewHangmanClient(id, name);
+			liveHangmanClients[id] = hangmanClient;
+		}, 3000 * index);
 	}
 };
+
 
 module.exports = {
 	addHangmanClient,
