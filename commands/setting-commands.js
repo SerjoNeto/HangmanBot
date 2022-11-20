@@ -181,8 +181,12 @@ const settingWinMessage = ({ channel, client, user, channelSettings, message }) 
     } else if (splitMessage.length >= 2) {
         // Set a new custom message. I really hope there's no string injection problems here.
         const newWinMsg = message.substr(message.indexOf(" ") + 1);
-        channelSettings.setWinMessage(newWinMsg);
-        client.say(channel, `@${user["display-name"]} The custom Hangman win message is now "${newWinMsg}".`);
+        if (newWinMsg.length > 100) {
+            client.say(channel, `@${user["display-name"]} Sorry, the win message can't be longer than 100 characters.`)
+        } else {
+            channelSettings.setWinMessage(newWinMsg);
+            client.say(channel, `@${user["display-name"]} The custom Hangman win message is now "${newWinMsg}".`);
+        }
     }
 }
 
