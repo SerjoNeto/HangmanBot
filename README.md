@@ -134,6 +134,9 @@ The following commands are used on your stream for Hangman.
 - Added a changeable timer between Hangman games if auto start is on with `!autotimer`.
 - Minor text edits.
 
+**1.2.0** : Added a Custom Win Message.
+- Add a custom win message to Hangman with `!winmessage`. 
+
 ## FAQs
 
 **Question: I changed my Twitch username and Hangman isn't working anymore.**
