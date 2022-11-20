@@ -66,8 +66,9 @@ There are settings that can be changed currently. To check all the current setti
 2. **Word Guess Cooldown**- Same as letter guess cooldown but with words. The commands are `!word`, or `!word <seconds between 0-3600>`.
 3. **Sub Only Games**- If you only want your Twitch subscribers to play Hangman (all tiers), you can change your Hangman games to sub only mode. Use `!subonly` to see the current sub only status. Turn on sub only games with `!subonly on` and turn off with `!subonly off`.
 4. **Auto Start Games**- If you are tired of typing `!start` every time a Hangman games end in chat to start a new one, you can set the bot to automatically start a new Hangman game immediately after the previous one ended. Use `!auto` to check the current auto start status. Turn on auto start games with `!auto on` and turn off with `!auto off`.
-5. **Auto Start Timer** - If you feel like auto start does not transition well enough immediately, and causes concerns because some people can accidentally guess incorrectly in an already finished game, you can set a time between the last game and next game is automatically start so thsi does not happen. Use `!autotimer <second between 0-3600>` to change. 
+5. **Auto Start Timer** - If you feel like auto start does not transition well enough immediately, and causes concerns because some people can accidentally guess incorrectly in an already finished game, you can set a time between the last game and next game is automatically start so this does not happen. Use `!autotimer <second between 0-3600>` to change. 
 6. **Error Messages**- If you are tired of people spamming Hangman guesses and the bot telling the user why their guess is invalid (still on cooldown, already guessed letter, word length not right, etc.), you can turn this off with `!error off` and on with `!error on`, and check the current state of error message display with `!error`.
+7. **Custom Win Message**- If you want to type a custom win message after a user wins a Hangman guess, you can set one with `!winmessage <message>`. You can see the current win message with just `!winmessage`, and there will not be any message unless you add one. To delete the win message, use `!clearwinmessage`. This was a highly request feature to give points from other Twitch bots, so if you want to mention the winner in the `<message>`, user "$user" like so; `!winmessage Congrats $user`. 
 
 **Default Settings:**
 
@@ -77,6 +78,7 @@ There are settings that can be changed currently. To check all the current setti
 4. **Auto Start Games** - Off
 5. **Auto Start Timer** - 15 seconds
 6. **Error Message** - On
+7. **Custom Win Message** - Empty
 
 ### Check The Leaderboards
 
@@ -111,6 +113,8 @@ The following commands are used on your stream for Hangman.
 - **!autotimer**- Command for auto start timers. If you have auto start Hangman games on, sometimes you want a little time before the next one automatically starts. You can set that time in seconds here. Use `!autotimer` to check the current auto play timer. Use `!autotimer <number between 0-3600>` like `!autotimer 30' to set the time in seconds. 
 - **!resetscores**- Command to reset the Hangman leaderboard. Please note that all your previous scores will be overridden and cannot be recovered, so think before you reset!
 - **!error**- Command for whether or not to show error messages for Hangman guesses. If this is turned on, the user will be informed the reason why their guess was invalid. Otherwise, the bot will not tell why a guess failed to save space. Use `!error` to see the current error message display state, and use `!error on` to turn on error messages, or `!error off` to turn off error message displays. 
+- **!winmessage**- Command for setting a custom win message once a user wins a Hangman game. There is nothing by default, so you will have to add one with `!winmessage <message>`.
+- **!clearwinmessage**- Command to delete the custom win message if you have one.
 - **!settings**- Command to check the current Hangman Bot settings for letter/word cooldown, sub only state and auto play state.
 
 **Commands for Everybody**
