@@ -12,6 +12,7 @@ class ChannelSettings {
     #autoPlay;
     #autoPlayTimer;
     #error;
+    #winMessage;
 
     /**
      * Settings admins can change for Hangman on a channel
@@ -22,6 +23,7 @@ class ChannelSettings {
      * @param {boolean} autoPlay Automatically start another Hangman game when one ends.
      * @param {integer} autoPlayTimer How long before a Hangman game starts automatically after one ends.
      * @param {boolean} error Show error messages for Hangman in chat.
+     * @param {String} winMessage Custom win message for a Hangman win.
      */
     constructor(userId) {
         this.#id = userId
@@ -31,6 +33,7 @@ class ChannelSettings {
         this.#autoPlay = false
         this.#autoPlayTimer = 15
         this.#error = true
+        this.#winMessage = null
     }
 
     /**
@@ -45,7 +48,8 @@ class ChannelSettings {
             subOnly: this.#subOnly,
             autoPlay: this.#autoPlay,
             autoPlayTimer: this.#autoPlayTimer,
-            error: this.#error
+            error: this.#error,
+            winMessage: this.#winMessage
         }
         return settingInJSON;
     }
@@ -62,6 +66,7 @@ class ChannelSettings {
         this.#autoPlay = settingJSON.autoPlay ?? false;
         this.#autoPlayTimer = settingJSON.autoPlayTimer ?? 15;
         this.#error = settingJSON.error ?? true;
+        this.#winMessage = settingJSON.winMessage ?? null;
     }
 
     /**
@@ -225,6 +230,31 @@ class ChannelSettings {
             return true;
         }
     }
+
+    /**
+     * Returns the current custom win message.
+     * @returns custom message.
+     */
+    getWinMessage() {
+        return this.#winMessage;
+    }
+
+    /**
+     * Sets a custom message for winning Hangman.
+     * @param {String} message Custom message for Hangman win.
+     */
+    setWinMessage(message) {
+        this.#winMessage = message;
+        this.saveSettings();
+    }
+
+    /**
+     * Removes custom win message.
+     */
+    clearWinMessage() {
+        this.#winMessage = null;
+        this.saveSettings();
+    }
     
     /**
      * Prints the settings in a readable format
@@ -234,7 +264,8 @@ class ChannelSettings {
         const subOnlyState = this.#subOnly ? "ON" : "OFF";
         const autoPlayState = this.#autoPlay ? "ON" : "OFF";
         const errorState = this.#error ? "ON" : "OFF";
-        return `Letter Guess Cooldown: ${this.#letterCooldown} second(s). Word Guess Cooldown: ${this.#wordCooldown} second(s). Sub Only: ${subOnlyState}. Auto Start: ${autoPlayState}. Auto Start Timer: ${this.#autoPlayTimer} second(s). Error messages: ${errorState}.`;
+        const winMsg = this.#winMessage ?? "NONE";
+        return `Letter Guess Cooldown: ${this.#letterCooldown} second(s). Word Guess Cooldown: ${this.#wordCooldown} second(s). Sub Only: ${subOnlyState}. Auto Start: ${autoPlayState}. Auto Start Timer: ${this.#autoPlayTimer} second(s). Error messages: ${errorState}. Custom Win Message: "${winMsg}".`;
     }
 }
 

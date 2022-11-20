@@ -8,7 +8,7 @@ const { hangmanBotName, hangmanBotOAuth } = require('../private/password');
 const { hangmanCommands, settingCommands } = require('../utils/commands');
 const { isGuess, isHangmanResetScores, hangmanStart, hangmanEnd, hangmanGuess, hangmanWins, hangmanLeaderboard, hangmanStats, hangmanCurrent, hangmanHelp, hangmanResetScores, hangmanStreaks } = require('../commands/hangman-commands');
 const { isAdmin } = require('../utils/users');
-const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, isAutoPlayTimer, settingAuto, showSettings, settingError, isError, settingAutoPlayTimer } = require('../commands/setting-commands');
+const { settingLetterCooldown, isLetterCooldown, isWordCooldown, settingWordCooldown, settingSubOnly, isSubOnly, isAuto, isAutoPlayTimer, settingAuto, showSettings, settingError, isError, settingAutoPlayTimer, isWinMessage, settingWinMessage, clearingWinMessage } = require('../commands/setting-commands');
 
 log4js.configure({
 	appenders: {
@@ -64,11 +64,6 @@ function createNewHangmanClient(id, name) {
 	const newHangmanClient = new tmi.client(hangmanOptions);
 	newHangmanClient.connect();
 
-	// Responds when client has been successfuly created.
-	newHangmanClient.on('connected', (address, port) => {
-		newHangmanClient.action(name, "is live!")
-	});
-
 	// Listener for Hangman messages. 
 	newHangmanClient.on('message', (channel, user, message, self) => {
 		// Ignore self messages and non-commands while logging self messages.
@@ -90,6 +85,8 @@ function createNewHangmanClient(id, name) {
 				[settingCommands.AUTO]: () => settingAuto({ ...adminProps, message }),
 				[settingCommands.AUTOTIMER]: () => settingAutoPlayTimer({...adminProps, message }),
 				[settingCommands.ERROR]: () => settingError({ ...adminProps, message }),
+				[settingCommands.WINMESSAGE]: () => settingWinMessage({ ...adminProps, message }),
+				[settingCommands.CLEARWINMESSAGE]: () => clearingWinMessage({ ...adminProps }),
 				[settingCommands.SETTINGS]: () => showSettings({ ...adminProps })
 			}
 
@@ -112,6 +109,9 @@ function createNewHangmanClient(id, name) {
 					break;
 				case (isError(message)):
 					settingCommand = `!error`
+					break;
+				case (isWinMessage(message)):
+					settingCommand = `!winmessage`
 					break;
 				default:
 					settingCommand = message;

@@ -28,5 +28,7 @@ exports.settingCommands = {
 	AUTO: `!auto`,
 	AUTOTIMER: `!autotimer`,
 	ERROR: `!error`,
+	WINMESSAGE: `!winmessage`,
+	CLEARWINMESSAGE: `!clearwinmessage`,
 	SETTINGS: `!settings`
 }
