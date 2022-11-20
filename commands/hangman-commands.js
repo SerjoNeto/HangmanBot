@@ -2,6 +2,7 @@ const { getRandomWord } = require('../data/dictionary');
 const { hangmanCommands } = require('../utils/commands');
 const { ordinalSuffix, convertPercentage } = require('../utils/numbers');
 const { isAdmin, isSub } = require('../utils/users');
+const { winMessageBuilder } = require('../utils/strings');
 
 function startHangmanGameDelay(channel, client, channelHangman, channelSettings, logger) {
     if (channelSettings.getAuto()) {
@@ -143,6 +144,14 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
                 const [win, place] = channelScores.getWinsAndPlaceById(userId);
                 const winStreak = channelScores.getCurrentStreak();
                 client.say(channel, `@${user["display-name"]} PogChamp CONGRATS! ${winStreak} WIN STREAK! The word is "${channelHangman.getWord()}". You are now in ${ordinalSuffix(place)} place with ${win} wins! PogChamp`);
+                
+                // If custom win message exists, say it.
+                const winMsg = channelSettings.getWinMessage();
+                if (winMsg !== null) {
+                    const newWinMsg = winMessageBuilder(user["display-name"], winMsg);
+                    client.say(channel, `${newWinMsg}`);
+                }
+                
                 startHangmanGameDelay(channel, client, channelHangman, channelSettings, logger);
             } else {
                 //Correct, but more letters to be guessed.
@@ -188,6 +197,14 @@ const hangmanGuess = ({ channel, client, user, channelHangman, channelSettings, 
             const [win, place] = channelScores.getWinsAndPlaceById(userId);
             const winStreak = channelScores.getCurrentStreak();
             client.say(channel, `@${user["display-name"]} PogChamp CONGRATS! ${winStreak} WIN STREAK! The word is "${channelHangman.getWord()}". You are now in ${ordinalSuffix(place)} place with ${win} wins! PogChamp`);
+            
+            // If custom win message exists, say it.
+            const winMsg = channelSettings.getWinMessage();
+            if (winMsg !== null) {
+                const newWinMsg = winMessageBuilder(user["display-name"], winMsg);
+                client.say(channel, `${newWinMsg}`);
+            }
+
             startHangmanGameDelay(channel, client, channelHangman, channelSettings, logger);
         } else {
             channelHangman.loseALive();

@@ -161,6 +161,44 @@ const settingError = ({ channel, client, user, channelSettings, message }) => {
     }
 }
 
+/** Checks if the user wants to get or set a custom win message. */
+const isWinMessage = message => (message.startsWith(settingCommands.WINMESSAGE) && message.split(" ")[0] === settingCommands.WINMESSAGE);
+
+/**
+ * Set or get the current custom win message for winning a Hangman game.
+ * @param {props} proprs All the props needed 
+ */
+const settingWinMessage = ({ channel, client, user, channelSettings, message }) => {
+    const splitMessage = message.split(" ");
+    if (message === settingCommands.WINMESSAGE) {
+        // Get the current win message.
+        const winMsg = channelSettings.getWinMessage();
+        if (winMsg === null) {
+            client.say(channel, `@${user["display-name"]} There is currently no custom Hangman win message. You can set one with "!winmessage <message>, and type "$user" in the message for the winner's username.`);
+        } else {
+            client.say(channel, `@${user["display-name"]} The current custom Hangman win message is: "${winMsg}".`);
+        }
+    } else if (splitMessage.length >= 2) {
+        // Set a new custom message. I really hope there's no string injection problems here.
+        const newWinMsg = message.substr(message.indexOf(" ") + 1);
+        if (newWinMsg.length > 100) {
+            client.say(channel, `@${user["display-name"]} Sorry, the win message can't be longer than 100 characters.`)
+        } else {
+            channelSettings.setWinMessage(newWinMsg);
+            client.say(channel, `@${user["display-name"]} The custom Hangman win message is now "${newWinMsg}".`);
+        }
+    }
+}
+
+/**
+ * Deletes the current custom win message.
+ * @param {props} proprs All the props needed 
+ */
+const clearingWinMessage = ({ channel, client, user, channelSettings }) => {
+    channelSettings.clearWinMessage();
+    client.say(channel, `@${user["display-name"]} The custom win message has been deleted!`);
+}
+
 /**
  * Prints out all the settings.
  * @param {props} props All the props needed
@@ -182,5 +220,8 @@ module.exports = {
     settingAutoPlayTimer,
     isError,
     settingError,
+    isWinMessage,
+    settingWinMessage,
+    clearingWinMessage,
     showSettings
 }
